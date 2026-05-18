@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script defer th:src="@{/js/ui.js}"></script>
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page">
+    <nav class="topbar">
+        <h1 data-testid="task-list-title">My Tasks</h1>
+        <div class="actions">
+            <a th:href="@{/tasks/new}" data-testid="create-task-link">New task</a>
+            <a th:if="${isAdmin}" th:href="@{/admin}" data-testid="admin-dashboard-link">Admin dashboard</a>
+        </div>
+    </nav>
+
+    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}" data-testid="success-message"></div>
+    <div class="toast" data-testid="toast-notification" role="status"></div>
+
+    <section class="filters" data-testid="task-filters">
+        <label for="taskStatusFilter">Status</label>
+        <select id="taskStatusFilter" data-testid="task-status-filter">
+            <option value="">All statuses</option>
+            <option value="TODO">TODO</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="DONE">DONE</option>
+            <option value="CANCELLED">CANCELLED</option>
+        </select>
+
+        <button type="button" class="secondary" data-testid="clear-task-filters-button">Clear filters</button>
+    </section>
+
+    <table data-testid="task-table">
+        <thead>
+        <tr>
+            <th><button type="button" class="sort-header" data-sort-key="title" data-testid="task-sort-title">Title <span data-sort-indicator="title" data-testid="task-sort-title-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="status" data-testid="task-sort-status">Status <span data-sort-indicator="status" data-testid="task-sort-status-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="priority" data-testid="task-sort-priority">Priority <span data-sort-indicator="priority" data-testid="task-sort-priority-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="dueDate" data-testid="task-sort-due-date">Due date <span data-sort-indicator="dueDate" data-testid="task-sort-due-date-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="owner" data-testid="task-sort-owner">Owner <span data-sort-indicator="owner" data-testid="task-sort-owner-indicator"></span></button></th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${tasks}"
+            th:attr="data-testid='task-row-' + ${task.id()},data-status=${task.status()},data-sort-title=${task.title()},data-sort-status=${task.status()},data-sort-priority=${task.priority()},data-sort-dueDate=${task.dueDate()},data-sort-owner=${task.ownerEmail()}">
+            <td th:text="${task.title()}" th:attr="data-testid='task-title-' + ${task.id()}"></td>
+            <td>
+                <span th:text="${task.status()}"
+                      th:class="'status-badge status-' + ${task.status()}"
+                      th:attr="data-testid='task-status-' + ${task.id()}"></span>
+            </td>
+            <td th:text="${task.priority()}" th:attr="data-testid='task-priority-' + ${task.id()}"></td>
+            <td th:text="${task.dueDate()}" th:attr="data-testid='task-due-date-' + ${task.id()}"></td>
+            <td th:text="${task.ownerEmail()}" th:attr="data-testid='task-owner-' + ${task.id()}"></td>
+            <td class="row-actions">
+                <a th:href="@{/tasks/{id}(id=${task.id()})}" th:attr="data-testid='view-task-' + ${task.id()}">View</a>
+                <a th:href="@{/tasks/{id}/edit(id=${task.id()})}" th:attr="data-testid='edit-task-' + ${task.id()}">Edit</a>
+                <form th:action="@{/tasks/{id}/complete(id=${task.id()})}" method="post">
+                    <button type="submit" class="secondary" th:attr="data-testid='complete-task-' + ${task.id()}">Complete</button>
+                </form>
+                <form th:action="@{/tasks/{id}/delete(id=${task.id()})}" method="post">
+                    <button type="submit" class="danger" data-confirm-delete="true"
+                            th:attr="data-testid='delete-task-' + ${task.id()},data-confirm-message='Delete task ' + ${task.id()} + '?'">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr class="empty-table-row" data-testid="task-empty-state-row" th:hidden="${!#lists.isEmpty(tasks)}">
+            <td colspan="6">No tasks found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="modal-backdrop" data-testid="delete-confirmation-modal" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p data-testid="delete-confirmation-message">Delete this task?</p>
+            <div class="actions">
+                <button type="button" class="secondary" data-testid="delete-cancel-button">Cancel</button>
+                <button type="button" class="danger" data-testid="delete-confirm-button">Confirm</button>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Details - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page narrow">
+    <h1 data-testid="task-details-title">Task Details</h1>
+    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}" data-testid="success-message"></div>
+    <dl class="details" data-testid="task-details">
+        <dt>ID</dt><dd th:text="${task.id()}" data-testid="task-id"></dd>
+        <dt>Title</dt><dd th:text="${task.title()}" data-testid="task-title"></dd>
+        <dt>Status</dt><dd th:text="${task.status()}" data-testid="task-status"></dd>
+        <dt>Priority</dt><dd th:text="${task.priority()}" data-testid="task-priority"></dd>
+        <dt>Due date</dt><dd th:text="${task.dueDate()}" data-testid="task-due-date"></dd>
+        <dt>Owner</dt><dd th:text="${task.ownerEmail()}" data-testid="task-owner"></dd>
+    </dl>
+    <div class="actions">
+        <a th:href="@{/tasks/{id}/edit(id=${task.id()})}" data-testid="edit-task-link">Edit</a>
+        <a th:href="@{/tasks}" data-testid="back-to-tasks-link">Back</a>
+    </div>
+</main>
+</body>
+</html>

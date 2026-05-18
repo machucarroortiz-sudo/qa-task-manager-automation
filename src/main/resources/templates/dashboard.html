@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page">
+    <h1 data-testid="dashboard-title">Dashboard</h1>
+    <div class="summary-grid" data-testid="dashboard-summary">
+        <section class="summary-panel" data-testid="dashboard-task-card">
+            <strong>Tasks</strong>
+            <div class="counter-grid">
+                <a th:href="@{/tasks}" class="counter-link" data-testid="dashboard-total-task-counter">
+                    <span th:text="${taskCount}"></span>
+                    <small>Total</small>
+                </a>
+                <a th:href="@{/tasks(status='TODO')}" class="counter-link counter-blue" data-testid="dashboard-task-todo-counter">
+                    <span th:text="${taskTodoCount}"></span>
+                    <small>TODO</small>
+                </a>
+                <a th:href="@{/tasks(status='IN_PROGRESS')}" class="counter-link counter-orange" data-testid="dashboard-task-in-progress-counter">
+                    <span th:text="${taskInProgressCount}"></span>
+                    <small>IN_PROGRESS</small>
+                </a>
+                <a th:href="@{/tasks(status='DONE')}" class="counter-link counter-green" data-testid="dashboard-task-done-counter">
+                    <span th:text="${taskDoneCount}"></span>
+                    <small>DONE</small>
+                </a>
+            </div>
+        </section>
+        <section class="summary-panel" data-testid="dashboard-issue-card">
+            <strong>Issues</strong>
+            <div class="counter-grid">
+                <a th:href="@{/issues}" class="counter-link" data-testid="dashboard-total-issue-counter">
+                    <span th:text="${issueCount}"></span>
+                    <small>Total</small>
+                </a>
+                <a th:href="@{/issues(status='OPEN')}" class="counter-link counter-blue" data-testid="dashboard-issue-open-counter">
+                    <span th:text="${issueOpenCount}"></span>
+                    <small>OPEN</small>
+                </a>
+                <a th:href="@{/issues(status='IN_PROGRESS')}" class="counter-link counter-orange" data-testid="dashboard-issue-in-progress-counter">
+                    <span th:text="${issueInProgressCount}"></span>
+                    <small>IN_PROGRESS</small>
+                </a>
+                <a th:href="@{/issues(status='BLOCKED')}" class="counter-link counter-red" data-testid="dashboard-issue-blocked-counter">
+                    <span th:text="${issueBlockedCount}"></span>
+                    <small>BLOCKED</small>
+                </a>
+                <a th:href="@{/issues(status='RESOLVED')}" class="counter-link counter-green" data-testid="dashboard-issue-resolved-counter">
+                    <span th:text="${issueResolvedCount}"></span>
+                    <small>RESOLVED</small>
+                </a>
+                <a th:href="@{/issues(status='CLOSED')}" class="counter-link counter-gray" data-testid="dashboard-issue-closed-counter">
+                    <span th:text="${issueClosedCount}"></span>
+                    <small>CLOSED</small>
+                </a>
+                <a th:href="@{/issues(status='CANCELLED')}" class="counter-link counter-gray" data-testid="dashboard-issue-cancelled-counter">
+                    <span th:text="${issueCancelledCount}"></span>
+                    <small>CANCELLED</small>
+                </a>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

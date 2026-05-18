@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Form - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page narrow">
+    <h1 th:text="${taskId == null ? 'Create Task' : 'Edit Task'}" data-testid="task-form-title"></h1>
+
+    <form th:action="${taskId == null} ? @{/tasks} : @{/tasks/{id}(id=${taskId})}" th:object="${task}" method="post" class="form" data-testid="task-form">
+        <label for="title">Title</label>
+        <input id="title" th:field="*{title}" maxlength="100" data-testid="task-title-input">
+        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="field-error" data-testid="title-validation-message"></div>
+
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}" data-testid="task-status-select">
+            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="field-error" data-testid="status-validation-message"></div>
+
+        <label for="priority">Priority</label>
+        <select id="priority" th:field="*{priority}" data-testid="task-priority-select">
+            <option th:each="priority : ${priorities}" th:value="${priority}" th:text="${priority}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}" class="field-error" data-testid="priority-validation-message"></div>
+
+        <label for="dueDate">Due date</label>
+        <input id="dueDate" th:field="*{dueDate}" type="date" data-testid="task-due-date-input">
+        <div th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}" class="field-error" data-testid="due-date-validation-message"></div>
+
+        <div class="actions">
+            <button type="submit" data-testid="save-task-button">Save</button>
+            <a th:href="@{/tasks}" data-testid="cancel-task-link">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

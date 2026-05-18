@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Labels - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page">
+    <h1 data-testid="label-admin-title">Label Management</h1>
+    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}" data-testid="success-message"></div>
+    <div th:if="${errorMessage}" class="alert error" th:text="${errorMessage}" data-testid="error-message"></div>
+
+    <form th:action="@{/admin/labels}" th:object="${label}" method="post" class="form narrow-form" data-testid="create-label-form">
+        <label for="name">Name</label>
+        <input id="name" th:field="*{name}" data-testid="label-name-input">
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="field-error" data-testid="label-name-validation-message"></div>
+
+        <label for="color">Color</label>
+        <input id="color" th:field="*{color}" data-testid="label-color-input">
+        <div th:if="${#fields.hasErrors('color')}" th:errors="*{color}" class="field-error" data-testid="label-color-validation-message"></div>
+
+        <button type="submit" data-testid="create-label-button">Create label</button>
+    </form>
+
+    <table data-testid="label-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Color</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="existingLabel : ${labels}" th:attr="data-testid='label-row-' + ${existingLabel.id()}">
+            <td>
+                <form th:action="@{/admin/labels/{id}(id=${existingLabel.id()})}" method="post" class="inline-form">
+                    <input name="name" th:value="${existingLabel.name()}" th:attr="data-testid='label-name-edit-' + ${existingLabel.id()}">
+                    <input name="color" th:value="${existingLabel.color()}" th:attr="data-testid='label-color-edit-' + ${existingLabel.id()}">
+                    <button type="submit" class="secondary" th:attr="data-testid='update-label-' + ${existingLabel.id()}">Update</button>
+                </form>
+            </td>
+            <td><span class="label-pill" th:style="'border-color:' + ${existingLabel.color()} + '; color:' + ${existingLabel.color()}" th:text="${existingLabel.color()}"></span></td>
+            <td>
+                <form th:action="@{/admin/labels/{id}/delete(id=${existingLabel.id()})}" method="post">
+                    <button type="submit" class="danger" th:attr="data-testid='delete-label-' + ${existingLabel.id()}">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

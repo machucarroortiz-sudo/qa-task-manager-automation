@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: automation_sut
+      POSTGRES_USER: sut_user
+      POSTGRES_PASSWORD: sut_password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sut_user -d automation_sut"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: local,postgres
+      APP_JWT_SECRET: local-demo-secret-key-for-jwt-signing-please-change
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy

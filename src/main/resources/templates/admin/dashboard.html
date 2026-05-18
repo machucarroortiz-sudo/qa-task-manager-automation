@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page">
+    <nav class="topbar">
+        <h1 data-testid="admin-dashboard-title">Admin Dashboard</h1>
+        <div class="actions">
+            <a th:href="@{/tasks}" data-testid="back-to-task-list-link">Task list</a>
+            <a th:href="@{/admin/labels}" data-testid="admin-labels-link">Labels</a>
+        </div>
+    </nav>
+
+    <table data-testid="admin-task-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Due date</th>
+            <th>Owner</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${tasks}" th:attr="data-testid='admin-task-row-' + ${task.id()}">
+            <td th:text="${task.id()}"></td>
+            <td th:text="${task.title()}"></td>
+            <td th:text="${task.status()}"></td>
+            <td th:text="${task.priority()}"></td>
+            <td th:text="${task.dueDate()}"></td>
+            <td th:text="${task.ownerEmail()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

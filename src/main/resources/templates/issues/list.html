@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Issues - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script defer th:src="@{/js/ui.js}"></script>
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page">
+    <nav class="topbar">
+        <h1 data-testid="issue-list-title">Issues</h1>
+        <a th:href="@{/issues/new}" data-testid="create-issue-link">New issue</a>
+    </nav>
+
+    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}" data-testid="success-message"></div>
+    <div class="toast" data-testid="toast-notification" role="status"></div>
+
+    <section class="filters" data-testid="issue-filters">
+        <label for="issueStatusFilter">Status</label>
+        <select id="issueStatusFilter" data-testid="issue-status-filter">
+            <option value="">All statuses</option>
+            <option value="OPEN">OPEN</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="BLOCKED">BLOCKED</option>
+            <option value="RESOLVED">RESOLVED</option>
+            <option value="CLOSED">CLOSED</option>
+            <option value="CANCELLED">CANCELLED</option>
+        </select>
+
+        <label for="issuePriorityFilter">Priority</label>
+        <select id="issuePriorityFilter" data-testid="issue-priority-filter">
+            <option value="">All priorities</option>
+            <option value="LOW">LOW</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="HIGH">HIGH</option>
+            <option value="CRITICAL">CRITICAL</option>
+        </select>
+
+        <label for="issueTitleSearch">Title</label>
+        <input id="issueTitleSearch" type="search" placeholder="Search title" data-testid="issue-title-search">
+
+        <button type="button" class="secondary" data-testid="clear-issue-filters-button">Clear filters</button>
+    </section>
+
+    <table data-testid="issue-table">
+        <thead>
+        <tr>
+            <th><button type="button" class="sort-header" data-sort-key="title" data-testid="issue-sort-title">Title <span data-sort-indicator="title" data-testid="issue-sort-title-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="status" data-testid="issue-sort-status">Status <span data-sort-indicator="status" data-testid="issue-sort-status-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="priority" data-testid="issue-sort-priority">Priority <span data-sort-indicator="priority" data-testid="issue-sort-priority-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="startDate" data-testid="issue-sort-start">Start <span data-sort-indicator="startDate" data-testid="issue-sort-start-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="endDate" data-testid="issue-sort-end">End <span data-sort-indicator="endDate" data-testid="issue-sort-end-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="creator" data-testid="issue-sort-creator">Creator <span data-sort-indicator="creator" data-testid="issue-sort-creator-indicator"></span></button></th>
+            <th><button type="button" class="sort-header" data-sort-key="assigned" data-testid="issue-sort-assigned">Assigned <span data-sort-indicator="assigned" data-testid="issue-sort-assigned-indicator"></span></button></th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="issue : ${issues}"
+            th:attr="data-testid='issue-row-' + ${issue.id()},data-status=${issue.status()},data-priority=${issue.priority()},data-title=${issue.title()},data-sort-title=${issue.title()},data-sort-status=${issue.status()},data-sort-priority=${issue.priority()},data-sort-startDate=${issue.startDate()},data-sort-endDate=${issue.endDate()},data-sort-creator=${issue.creatorEmail()},data-sort-assigned=${issue.assignedUserEmail()}">
+            <td th:text="${issue.title()}" th:attr="data-testid='issue-title-' + ${issue.id()}"></td>
+            <td>
+                <span th:text="${issue.status()}"
+                      th:class="'status-badge status-' + ${issue.status()}"
+                      th:attr="data-testid='issue-status-' + ${issue.id()}"></span>
+            </td>
+            <td th:text="${issue.priority()}" th:attr="data-testid='issue-priority-' + ${issue.id()}"></td>
+            <td th:text="${issue.startDate()}"></td>
+            <td th:text="${issue.endDate()}"></td>
+            <td th:text="${issue.creatorEmail()}"></td>
+            <td th:text="${issue.assignedUserEmail()}"></td>
+            <td class="row-actions">
+                <a th:href="@{/issues/{id}(id=${issue.id()})}" th:attr="data-testid='view-issue-' + ${issue.id()}">View</a>
+                <a th:href="@{/issues/{id}/edit(id=${issue.id()})}" th:attr="data-testid='edit-issue-' + ${issue.id()}">Edit</a>
+                <form th:action="@{/issues/{id}/delete(id=${issue.id()})}" method="post">
+                    <button type="submit" class="danger" data-confirm-delete="true"
+                            th:attr="data-testid='delete-issue-' + ${issue.id()},data-confirm-message='Delete issue ' + ${issue.id()} + '?'">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr class="empty-table-row" data-testid="issue-empty-state-row" th:hidden="${!#lists.isEmpty(issues)}">
+            <td colspan="8">No issues found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="modal-backdrop" data-testid="delete-confirmation-modal" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p data-testid="delete-confirmation-message">Delete this issue?</p>
+            <div class="actions">
+                <button type="button" class="secondary" data-testid="delete-cancel-button">Cancel</button>
+                <button type="button" class="danger" data-testid="delete-confirm-button">Confirm</button>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

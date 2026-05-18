@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Issue Form - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page narrow">
+    <h1 th:text="${issueId == null ? 'Create Issue' : 'Edit Issue'}" data-testid="issue-form-title"></h1>
+
+    <form th:action="${issueId == null} ? @{/issues} : @{/issues/{id}(id=${issueId})}" th:object="${issue}" method="post" class="form" data-testid="issue-form">
+        <label for="title">Title</label>
+        <input id="title" th:field="*{title}" maxlength="120" data-testid="issue-title-input">
+        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="field-error" data-testid="issue-title-validation-message"></div>
+
+        <label for="description">Description</label>
+        <textarea id="description" th:field="*{description}" maxlength="2000" data-testid="issue-description-input"></textarea>
+        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="field-error" data-testid="issue-description-validation-message"></div>
+
+        <label for="startDate">Start date</label>
+        <input id="startDate" th:field="*{startDate}" type="date" data-testid="issue-start-date-input">
+        <div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="field-error" data-testid="issue-start-date-validation-message"></div>
+
+        <label for="endDate">End date</label>
+        <input id="endDate" th:field="*{endDate}" type="date" data-testid="issue-end-date-input">
+        <div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="field-error" data-testid="issue-end-date-validation-message"></div>
+        <div th:if="${#fields.hasErrors('dateRangeValid')}" th:errors="*{dateRangeValid}" class="field-error" data-testid="issue-date-range-validation-message"></div>
+
+        <label for="assignedUserId">Assigned user</label>
+        <select id="assignedUserId" th:field="*{assignedUserId}" data-testid="issue-assigned-user-select">
+            <option value="">Select user</option>
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.email}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('assignedUserId')}" th:errors="*{assignedUserId}" class="field-error" data-testid="issue-assigned-user-validation-message"></div>
+
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}" data-testid="issue-status-select">
+            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
+        </select>
+
+        <label for="priority">Priority</label>
+        <select id="priority" th:field="*{priority}" data-testid="issue-priority-select">
+            <option th:each="priority : ${priorities}" th:value="${priority}" th:text="${priority}"></option>
+        </select>
+
+        <fieldset class="checkbox-group" data-testid="issue-label-checkboxes">
+            <legend>Labels</legend>
+            <label th:each="label : ${labels}" class="checkbox-label">
+                <input type="checkbox" th:field="*{labelIds}" th:value="${label.id()}" th:attr="data-testid='issue-label-checkbox-' + ${label.id()}">
+                <span th:text="${label.name()}"></span>
+            </label>
+        </fieldset>
+
+        <div class="actions">
+            <button type="submit" data-testid="save-issue-button">Save</button>
+            <a th:href="@{/issues}" data-testid="cancel-issue-link">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

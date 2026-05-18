@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<main class="page narrow">
+    <h1 data-testid="login-page-title">QA Task Manager SUT</h1>
+    <p class="muted">Use one of the seeded users to exercise role-based behavior.</p>
+
+    <div th:if="${param.error}" class="alert error" data-testid="login-error">Invalid email or password</div>
+    <div th:if="${param.logout}" class="alert success" data-testid="logout-success">You have been logged out</div>
+
+    <form th:action="@{/login}" method="post" class="form" data-testid="login-form">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="username" data-testid="login-email-input" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" data-testid="login-password-input" required>
+
+        <button type="submit" data-testid="login-submit-button">Log in</button>
+    </form>
+
+    <section class="seed-users" data-testid="seed-users">
+        <strong>Seed users</strong>
+        <p>admin@example.com / password123 / ADMIN</p>
+        <p>user1@example.com / password123 / USER</p>
+        <p>user2@example.com / password123 / USER</p>
+    </section>
+</main>
+</body>
+</html>

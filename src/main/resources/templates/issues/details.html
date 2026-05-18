@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Issue Details - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script defer th:src="@{/js/ui.js}"></script>
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page">
+    <h1 data-testid="issue-details-title">Issue Details</h1>
+    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}" data-testid="success-message"></div>
+    <div th:if="${errorMessage}" class="alert error" th:text="${errorMessage}" data-testid="error-message"></div>
+    <div class="toast" data-testid="toast-notification" role="status"></div>
+
+    <dl class="details wide" data-testid="issue-details">
+        <dt>ID</dt><dd th:text="${issue.id()}" data-testid="issue-id"></dd>
+        <dt>Title</dt><dd th:text="${issue.title()}" data-testid="issue-title"></dd>
+        <dt>Description</dt><dd th:text="${issue.description()}" data-testid="issue-description"></dd>
+        <dt>Status</dt>
+        <dd>
+            <span th:text="${issue.status()}" th:class="'status-badge status-' + ${issue.status()}" data-testid="issue-status"></span>
+        </dd>
+        <dt>Priority</dt><dd th:text="${issue.priority()}" data-testid="issue-priority"></dd>
+        <dt>Start date</dt><dd th:text="${issue.startDate()}" data-testid="issue-start-date"></dd>
+        <dt>End date</dt><dd th:text="${issue.endDate()}" data-testid="issue-end-date"></dd>
+        <dt>Creator</dt><dd th:text="${issue.creatorEmail()}" data-testid="issue-creator"></dd>
+        <dt>Assigned</dt><dd th:text="${issue.assignedUserEmail()}" data-testid="issue-assigned-user"></dd>
+        <dt>Labels</dt>
+        <dd data-testid="issue-labels">
+            <span th:each="label : ${issue.labels()}" class="label-pill" th:style="'border-color:' + ${label.color()} + '; color:' + ${label.color()}" th:text="${label.name()}"></span>
+        </dd>
+    </dl>
+
+    <div class="actions">
+        <a th:href="@{/issues/{id}/edit(id=${issue.id()})}" data-testid="edit-issue-link">Edit</a>
+        <a th:href="@{/issues}" data-testid="back-to-issues-link">Back</a>
+    </div>
+
+    <section class="section" data-testid="issue-comments-section">
+        <h2>Comments</h2>
+        <form th:action="@{/issues/{id}/comments(id=${issue.id()})}" method="post" class="form" data-testid="add-comment-form">
+            <label for="text">Comment</label>
+            <textarea id="text" name="text" maxlength="1000" data-testid="comment-text-input"></textarea>
+            <button type="submit" data-testid="add-comment-button">Add comment</button>
+        </form>
+
+        <div th:if="${#lists.isEmpty(issue.comments())}" class="empty-state" data-testid="comments-empty-state">No comments found.</div>
+
+        <article th:each="comment : ${issue.comments()}" class="comment" th:attr="data-testid='comment-' + ${comment.id()}">
+            <header>
+                <strong th:text="${comment.authorEmail()}" th:attr="data-testid='comment-author-' + ${comment.id()}"></strong>
+                <span th:text="${comment.createdAt()}" th:attr="data-testid='comment-created-at-' + ${comment.id()}"></span>
+            </header>
+            <p th:text="${comment.text()}" th:attr="data-testid='comment-text-' + ${comment.id()}"></p>
+
+            <ul data-testid="comment-attachments">
+                <li th:each="attachment : ${comment.attachments()}" th:attr="data-testid='attachment-' + ${attachment.id()}">
+                    <a th:href="@{/api/issues/{issueId}/comments/{commentId}/attachments/{attachmentId}(issueId=${issue.id()},commentId=${comment.id()},attachmentId=${attachment.id()})}"
+                       th:text="${attachment.fileName()}"></a>
+                    <span th:text="${attachment.contentType()}"></span>
+                    <span th:text="${attachment.fileSize()} + ' bytes'"></span>
+                </li>
+            </ul>
+
+            <form th:action="@{/issues/{issueId}/comments/{commentId}/attachments(issueId=${issue.id()},commentId=${comment.id()})}" method="post" enctype="multipart/form-data" class="inline-form" th:attr="data-testid='attachment-form-' + ${comment.id()}">
+                <input type="file" name="file" accept=".png,.jpg,.jpeg,.mp4" th:attr="data-testid='attachment-file-input-' + ${comment.id()}">
+                <button type="submit" class="secondary" th:attr="data-testid='upload-attachment-button-' + ${comment.id()}">Upload</button>
+            </form>
+        </article>
+    </section>
+</main>
+</body>
+</html>

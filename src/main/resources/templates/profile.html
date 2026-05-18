@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: mainNav}"></div>
+<main class="page narrow">
+    <h1 data-testid="profile-title">Profile</h1>
+    <dl class="details" data-testid="profile-details">
+        <dt>User ID</dt><dd th:text="${user.id}" data-testid="profile-user-id"></dd>
+        <dt>Email</dt><dd th:text="${user.email}" data-testid="profile-email"></dd>
+        <dt>Role</dt><dd th:text="${user.role}" data-testid="profile-role"></dd>
+    </dl>
+</main>
+</body>
+</html>
