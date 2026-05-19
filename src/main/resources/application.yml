@@ -5,6 +5,8 @@ server:
 spring:
   application:
     name: automation-sut
+  messages:
+    fallback-to-system-locale: false
   profiles:
     active: local
   datasource:
@@ -27,6 +29,15 @@ spring:
 app:
   jwt:
     secret: local-demo-secret-key-for-jwt-signing-please-change
+
+sut:
+  metadata:
+    display-name: QA Task Manager SUT
+    version: "@project.version@"
+    release-name: Localized QA baseline
+    lifecycle-stage: QA_READY
+    description: Stable QA baseline with localized GUI support
+    default-locale: en
 
 springdoc:
   swagger-ui:

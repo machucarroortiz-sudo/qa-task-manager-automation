@@ -12,27 +12,27 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class WebIssueForm {
-    @NotBlank
-    @Size(max = 120)
+    @NotBlank(message = "{validation.issue.title.required}")
+    @Size(max = 120, message = "{validation.issue.title.size}")
     private String title;
 
-    @NotBlank
-    @Size(max = 2000)
+    @NotBlank(message = "{validation.issue.description.required}")
+    @Size(max = 2000, message = "{validation.issue.description.size}")
     private String description;
 
-    @NotNull
+    @NotNull(message = "{validation.issue.startDate.required}")
     private LocalDate startDate;
 
-    @NotNull
+    @NotNull(message = "{validation.issue.endDate.required}")
     private LocalDate endDate;
 
-    @NotNull
+    @NotNull(message = "{validation.issue.assignedUser.required}")
     private Long assignedUserId;
 
-    @NotNull
+    @NotNull(message = "{validation.issue.status.required}")
     private IssueStatus status;
 
-    @NotNull
+    @NotNull(message = "{validation.issue.priority.required}")
     private IssuePriority priority;
 
     private Set<Long> labelIds = new LinkedHashSet<>();
@@ -52,7 +52,7 @@ public class WebIssueForm {
         this.labelIds = labelIds;
     }
 
-    @AssertTrue(message = "endDate cannot be before startDate")
+    @AssertTrue(message = "{validation.issue.dateRange}")
     public boolean isDateRangeValid() {
         return startDate == null || endDate == null || !endDate.isBefore(startDate);
     }

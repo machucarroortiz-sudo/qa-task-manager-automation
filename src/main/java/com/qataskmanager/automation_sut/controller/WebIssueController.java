@@ -75,7 +75,7 @@ public class WebIssueController {
             return "issues/form";
         }
         var response = issueService.createIssue(issue.toIssueRequest());
-        redirectAttributes.addFlashAttribute("successMessage", "Issue created successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.issue.created");
         return "redirect:/issues/" + response.id();
     }
 
@@ -113,14 +113,14 @@ public class WebIssueController {
             return "issues/form";
         }
         issueService.updateIssue(id, issue.toIssueRequest());
-        redirectAttributes.addFlashAttribute("successMessage", "Issue updated successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.issue.updated");
         return "redirect:/issues/" + id;
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         issueService.deleteIssue(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Issue deleted successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.issue.deleted");
         return "redirect:/issues";
     }
 
@@ -128,11 +128,11 @@ public class WebIssueController {
     public String addComment(@PathVariable Long id, @Valid @ModelAttribute("comment") CommentRequest comment,
                              BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Comment text is required");
+            redirectAttributes.addFlashAttribute("errorMessageKey", "flash.comment.required");
             return "redirect:/issues/" + id;
         }
         issueService.addComment(id, comment);
-        redirectAttributes.addFlashAttribute("successMessage", "Comment added successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.comment.added");
         return "redirect:/issues/" + id;
     }
 
@@ -141,7 +141,7 @@ public class WebIssueController {
                                 RedirectAttributes redirectAttributes) {
         try {
             issueService.addAttachment(issueId, commentId, file);
-            redirectAttributes.addFlashAttribute("successMessage", "Attachment uploaded successfully");
+            redirectAttributes.addFlashAttribute("successMessageKey", "flash.attachment.uploaded");
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
         }

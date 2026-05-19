@@ -6,12 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class WebLabelForm {
-    @NotBlank
-    @Size(max = 40)
+    @NotBlank(message = "{validation.label.name.required}")
+    @Size(max = 40, message = "{validation.label.name.size}")
     private String name;
 
-    @NotBlank
-    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "color must be a hex value like #2868c7")
+    @NotBlank(message = "{validation.label.color.required}")
+    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "{validation.label.color.hex}")
     private String color;
 
     public WebLabelForm() {

@@ -31,7 +31,7 @@ public class WebSettingsController {
     @PostMapping("/reset")
     public String reset(RedirectAttributes redirectAttributes) {
         var summary = testDataService.reset();
-        redirectAttributes.addFlashAttribute("successMessage", "SUT data reset completed");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.settings.reset");
         redirectAttributes.addFlashAttribute("dataSummary", summary);
         return "redirect:/settings";
     }
@@ -40,10 +40,10 @@ public class WebSettingsController {
     public String clear(RedirectAttributes redirectAttributes) {
         try {
             var summary = testDataService.clearAllData();
-            redirectAttributes.addFlashAttribute("successMessage", "All SUT data cleared successfully");
+            redirectAttributes.addFlashAttribute("successMessageKey", "flash.settings.clear");
             redirectAttributes.addFlashAttribute("dataSummary", summary);
         } catch (RuntimeException exception) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Could not clear SUT data");
+            redirectAttributes.addFlashAttribute("errorMessageKey", "flash.settings.clearFailed");
         }
         return "redirect:/settings";
     }
@@ -51,7 +51,7 @@ public class WebSettingsController {
     @PostMapping("/demo")
     public String demo(RedirectAttributes redirectAttributes) {
         var summary = testDataService.loadDemoData();
-        redirectAttributes.addFlashAttribute("successMessage", "Demo data loaded successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.settings.demo");
         redirectAttributes.addFlashAttribute("dataSummary", summary);
         return "redirect:/settings";
     }
@@ -60,7 +60,7 @@ public class WebSettingsController {
     public String importData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
         try {
             var summary = testDataService.importData(file);
-            redirectAttributes.addFlashAttribute("successMessage", "Test data imported successfully");
+            redirectAttributes.addFlashAttribute("successMessageKey", "flash.settings.import");
             redirectAttributes.addFlashAttribute("dataSummary", summary);
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());

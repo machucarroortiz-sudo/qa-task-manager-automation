@@ -24,13 +24,31 @@ mvn spring-boot:run
 docker compose up --build
 ```
 
+Docker Compose starts the application with PostgreSQL and exposes the app on port `8080`.
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
+You can also build and run only the application image with the default in-memory H2 database:
+
+```bash
+docker build -t qa-task-manager-sut:1.0.0 .
+docker run --rm -p 8080:8080 qa-task-manager-sut:1.0.0
+```
+
 ### Access URLs
 
 | Area | URL |
 | --- | --- |
 | UI | `http://localhost:8080` |
+| Health API | `http://localhost:8080/api/health` |
 | Swagger/OpenAPI | `http://localhost:8080/swagger-ui/index.html` |
-| H2 Console | `http://localhost:8080/h2-console` |
+| H2 Console | `http://localhost:8080/h2-console` when running the default H2 profile |
+
+Docker Compose uses PostgreSQL, so the H2 console is only useful for the default local H2 run mode.
 
 ### Demo Users
 
@@ -53,6 +71,42 @@ The application also creates predefined tasks, labels, issues, and comments for 
 - H2 for local development
 - PostgreSQL with Docker Compose
 - springdoc-openapi 3.0.3 for Swagger/OpenAPI
+
+## SUT Versioning
+
+The SUT starts formal QA tracking at version `1.0.0`, the first stable QA baseline. Earlier GitHub commits are considered initial development snapshots.
+
+Versioning follows `MAJOR.MINOR.PATCH`:
+
+- `PATCH`: defect fixes found during QA, for example `1.0.1`.
+- `MINOR`: meaningful compatible improvements, for example `1.1.0`.
+- `MAJOR`: important or incompatible SUT changes, for example `2.0.0`.
+
+See [`VERSIONING.md`](VERSIONING.md) for the full versioning rules.
+
+## Application Metadata
+
+The SUT exposes application metadata for QA evidence and issue context.
+
+Available UI area:
+
+- `SUT Information`, available from the sidebar navigation.
+
+Available API endpoint:
+
+- `GET /api/sut-info`
+
+The metadata includes SUT version, release name, lifecycle stage, active Spring profiles, runtime, database, and host information. It intentionally avoids secrets, passwords, full environment variable dumps, and connection strings with credentials.
+
+## Localization
+
+The portfolio UI is English by default and supports Spanish from the language selector on the login page and authenticated top bar. The selected language is stored in the `sut_locale` cookie, so the preference survives navigation without changing API contracts.
+
+Localization is intentionally scoped:
+
+- GUI labels, navigation, forms, validation messages, empty states, and feedback messages use message bundles.
+- API routes, DTOs, enums, JSON contracts, code, and test selectors remain in English.
+- Task and issue user-entered content is a separate feature. Detail pages include a `Translate content` toggle with an icon-only tooltip warning that the assisted translation is approximate and does not modify stored data.
 
 ## Business Rules
 
@@ -207,6 +261,12 @@ Example:
 }
 ```
 
+### SUT Information
+
+- `GET /api/sut-info`
+
+This endpoint is authenticated and returns application metadata plus safe runtime, database, and host information for QA reporting.
+
 ### Example Task Request
 
 ```json
@@ -319,10 +379,10 @@ src/main/java/com/qataskmanager/automation_sut
   service       Business rules and authorization logic
 
 src/main/resources/templates
-  login, dashboard, task, issue, profile, and admin Thymeleaf pages
+  login, dashboard, settings, SUT information, task, issue, profile, admin, and shared Thymeleaf fragments
 
 src/test/java
-  empty by design so tests can be created externally or incrementally
+  test-data management and i18n bundle checks
 ```
 
 ## Design Decisions for Testability
@@ -333,12 +393,13 @@ src/test/java
 - Consistent JSON errors support API assertions.
 - Simple Thymeleaf pages keep UI automation stable.
 - `data-testid` attributes are included on important UI controls and messages.
+- UI localization keeps display text configurable while preserving stable English API and selector contracts.
 - Issue attachments are stored in H2/PostgreSQL as simple BLOB data plus metadata to avoid external storage dependencies.
 - The label model is intentionally small so admin CRUD tests stay focused on permissions and validation.
 - Issue visibility is explicit: admins see all issues; users see issues they created or are assigned to.
 - Layered architecture keeps business rules traceable from controller to service.
 - Swagger/OpenAPI supports exploratory testing with Postman and manual API checks.
-- The SUT does not include an automation test suite by design.
+- The SUT includes focused backend checks for test data management and i18n bundle consistency; broader UI/API automation can be added externally or incrementally.
 - `SELECTORS.md` documents stable `data-testid` values for UI automation.
 - `RBAC_MATRIX.md` documents expected role-based permissions.
 

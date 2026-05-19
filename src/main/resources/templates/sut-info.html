@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="|#{sutInfo.title} - #{app.fullName}|">SUT Information - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script defer th:src="@{/js/ui.js}"></script>
+</head>
+<body class="dashboard-body" th:attr="data-i18n-no-results=#{empty.results},data-i18n-empty-tasks=#{empty.tasks},data-i18n-empty-issues=#{empty.issues},data-i18n-delete-item=#{modal.delete.item},data-i18n-content-translate=#{contentTranslation.toggle},data-i18n-content-original=#{contentTranslation.showOriginal}">
+<div class="dashboard-shell is-sidebar-collapsed profile-shell">
+    <aside th:replace="~{fragments/navigation :: dashboardSidebar('sut-info', 'sutInfo.title')}"></aside>
+    <div class="dashboard-main-shell">
+        <header class="dashboard-topbar">
+            <button type="button" class="dashboard-menu-button" data-testid="dashboard-sidebar-toggle" th:attr="aria-label=#{common.toggleSidebar}" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+            <strong th:text="#{sutInfo.title}">SUT Information</strong>
+            <div th:replace="~{fragments/navigation :: topbarActions}"></div>
+        </header>
+        <main class="dashboard-page sut-info-page">
+            <section class="app-page-heading">
+                <h1 data-testid="sut-info-title" th:text="#{sutInfo.title}">SUT Information</h1>
+                <p th:text="#{sutInfo.subtitle}">Version and environment details for support, QA, and issue reporting.</p>
+            </section>
+
+            <section class="sut-info-grid" data-testid="sut-info-details">
+                <article class="sut-info-card">
+                    <h2 th:text="#{sutInfo.application}">Application</h2>
+                    <dl>
+                        <div><dt th:text="#{common.name}">Name</dt><dd th:text="${sutInfo.application().displayName()}" data-testid="sut-info-display-name"></dd></div>
+                        <div><dt th:text="#{common.version}">Version</dt><dd th:text="${sutInfo.application().version()}" data-testid="sut-info-version"></dd></div>
+                        <div><dt th:text="#{common.release}">Release</dt><dd th:text="${sutInfo.application().releaseName()}"></dd></div>
+                        <div><dt th:text="#{sutInfo.lifecycleStage}">Lifecycle stage</dt><dd th:text="${sutInfo.application().lifecycleStage()}"></dd></div>
+                        <div><dt th:text="#{common.description}">Description</dt><dd th:text="${sutInfo.application().description()}"></dd></div>
+                        <div><dt th:text="#{sutInfo.activeProfiles}">Active profiles</dt><dd th:text="${#strings.listJoin(sutInfo.application().activeProfiles(), ', ')}" data-testid="sut-info-active-profiles"></dd></div>
+                    </dl>
+                </article>
+
+                <article class="sut-info-card">
+                    <h2 th:text="#{sutInfo.runtime}">Runtime</h2>
+                    <dl>
+                        <div><dt>Java</dt><dd th:text="${sutInfo.runtime().javaVersion()}" data-testid="sut-info-java-version"></dd></div>
+                        <div><dt>Spring Boot</dt><dd th:text="${sutInfo.runtime().springBootVersion()}" data-testid="sut-info-spring-version"></dd></div>
+                        <div><dt th:text="#{sutInfo.server}">Server</dt><dd th:text="${sutInfo.runtime().server()}"></dd></div>
+                        <div><dt th:text="#{sutInfo.timezone}">Timezone</dt><dd th:text="${sutInfo.runtime().timezone()}"></dd></div>
+                    </dl>
+                </article>
+
+                <article class="sut-info-card">
+                    <h2 th:text="#{sutInfo.database}">Database</h2>
+                    <dl>
+                        <div><dt th:text="#{common.product}">Product</dt><dd th:text="${sutInfo.database().product()}" data-testid="sut-info-database-product"></dd></div>
+                        <div><dt th:text="#{common.version}">Version</dt><dd th:text="${sutInfo.database().version()}" data-testid="sut-info-database-version"></dd></div>
+                        <div><dt th:text="#{common.driver}">Driver</dt><dd th:text="${sutInfo.database().driver()}"></dd></div>
+                    </dl>
+                </article>
+
+                <article class="sut-info-card">
+                    <h2 th:text="#{sutInfo.host}">Host</h2>
+                    <dl>
+                        <div><dt th:text="#{sutInfo.operatingSystem}">Operating system</dt><dd th:text="${sutInfo.host().operatingSystem()}" data-testid="sut-info-os"></dd></div>
+                        <div><dt th:text="#{sutInfo.architecture}">Architecture</dt><dd th:text="${sutInfo.host().architecture()}" data-testid="sut-info-architecture"></dd></div>
+                    </dl>
+                </article>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

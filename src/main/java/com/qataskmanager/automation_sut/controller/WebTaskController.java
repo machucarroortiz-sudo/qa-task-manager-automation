@@ -66,7 +66,7 @@ public class WebTaskController {
             return "tasks/form";
         }
         taskService.createTask(task.toTaskRequest());
-        redirectAttributes.addFlashAttribute("successMessage", "Task created successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.task.created");
         return "redirect:/tasks";
     }
 
@@ -94,21 +94,21 @@ public class WebTaskController {
             return "tasks/form";
         }
         taskService.updateVisibleTask(id, task.toTaskRequest());
-        redirectAttributes.addFlashAttribute("successMessage", "Task updated successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.task.updated");
         return "redirect:/tasks/" + id;
     }
 
     @PostMapping("/{id}/complete")
     public String complete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         taskService.completeVisibleTask(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Task completed successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.task.completed");
         return "redirect:/tasks";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         taskService.deleteVisibleTask(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Task deleted successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.task.deleted");
         return "redirect:/tasks";
     }
 

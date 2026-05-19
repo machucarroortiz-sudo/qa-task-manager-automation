@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<form class="language-switcher" method="get" th:fragment="languageSwitcher" data-testid="language-switcher">
+    <label for="languageSelect" class="visually-hidden" th:text="#{language.label}">Language</label>
+    <select id="languageSelect" name="lang" data-testid="language-select" th:attr="aria-label=#{language.label}" onchange="this.form.submit()">
+        <option value="en" th:selected="${#locale.language == 'en'}" th:text="#{language.english}">English</option>
+        <option value="es" th:selected="${#locale.language == 'es'}" th:text="#{language.spanish}">Spanish</option>
+    </select>
+</form>
+</body>
+</html>

@@ -10,18 +10,18 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class WebTaskForm {
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "{validation.task.title.required}")
+    @Size(max = 100, message = "{validation.task.title.size}")
     private String title;
 
-    @NotNull
+    @NotNull(message = "{validation.task.status.required}")
     private TaskStatus status;
 
-    @NotNull
+    @NotNull(message = "{validation.task.priority.required}")
     private TaskPriority priority;
 
-    @NotNull
-    @FutureOrPresent(message = "dueDate cannot be in the past")
+    @NotNull(message = "{validation.task.dueDate.required}")
+    @FutureOrPresent(message = "{validation.task.dueDate.future}")
     private LocalDate dueDate;
 
     public WebTaskForm() {

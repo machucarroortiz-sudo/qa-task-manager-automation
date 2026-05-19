@@ -10,13 +10,19 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+    private final AppMetadataProperties metadata;
+
+    public OpenApiConfig(AppMetadataProperties metadata) {
+        this.metadata = metadata;
+    }
+
     @Bean
     public OpenAPI openAPI() {
         String schemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
                         .title("QA Task Manager SUT API")
-                        .version("1.0")
+                        .version(metadata.getVersion())
                         .description("Stable API designed for UI, API, RBAC, validation, and regression testing."))
                 .addSecurityItem(new SecurityRequirement().addList(schemeName))
                 .components(new Components().addSecuritySchemes(schemeName, new SecurityScheme()

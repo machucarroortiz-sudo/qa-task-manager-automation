@@ -13,6 +13,7 @@ Use `data-testid` values as the primary selector strategy for UI automation. Tre
 | Admin link | `nav-admin-link` |
 | Settings link | `nav-settings-link` |
 | Profile link | `nav-profile-link` |
+| SUT information link | `nav-sut-info-link` |
 | Logout button | `nav-logout-button` |
 
 ## Login
@@ -22,6 +23,8 @@ Use `data-testid` values as the primary selector strategy for UI automation. Tre
 | Seed users block | `seed-users` |
 | Login error | `login-error` |
 | Logout success | `logout-success` |
+| Language switcher | `language-switcher` |
+| Language select | `language-select` |
 
 ## Tasks
 
@@ -36,6 +39,7 @@ Use `data-testid` values as the primary selector strategy for UI automation. Tre
 | Pagination summary | `task-pagination-summary` |
 | Create task link | `create-task-link` |
 | View/Edit/Delete task | `view-task-{id}`, `edit-task-{id}`, `delete-task-{id}` |
+| Task content translation toggle | `content-translation-toggle` on task details |
 
 ## Issues
 
@@ -52,6 +56,7 @@ Use `data-testid` values as the primary selector strategy for UI automation. Tre
 | Pagination summary | `issue-pagination-summary` |
 | Create issue link | `create-issue-link` |
 | View/Edit/Delete issue | `view-issue-{id}`, `edit-issue-{id}`, `delete-issue-{id}` |
+| Issue content translation toggle | `content-translation-toggle` on issue details |
 
 ## Settings
 
@@ -72,6 +77,30 @@ Use `data-testid` values as the primary selector strategy for UI automation. Tre
 | Success message | `settings-success-message` |
 | Error message | `settings-error-message` |
 | Data summary | `settings-data-summary` |
+
+## SUT Information
+
+| Element | Selector |
+| --- | --- |
+| Page title | `sut-info-title` |
+| Details grid | `sut-info-details` |
+| Display name | `sut-info-display-name` |
+| Version | `sut-info-version` |
+| Active profiles | `sut-info-active-profiles` |
+| Java version | `sut-info-java-version` |
+| Spring Boot version | `sut-info-spring-version` |
+| Database product | `sut-info-database-product` |
+| Database version | `sut-info-database-version` |
+| Operating system | `sut-info-os` |
+| Architecture | `sut-info-architecture` |
+
+## Content Translation
+
+| Element | Selector |
+| --- | --- |
+| Translation control | `content-translation-control` |
+| Translation toggle | `content-translation-toggle` |
+| Tooltip icon | `content-translation-tooltip-icon` |
 
 ## Shared Components
 

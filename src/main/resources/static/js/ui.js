@@ -1,4 +1,12 @@
 (function () {
+    function i18n(key, fallback) {
+        var body = document.body;
+        if (!body) {
+            return fallback;
+        }
+        return body.getAttribute('data-i18n-' + key) || fallback;
+    }
+
     function showToastFromAlerts() {
         var alert = document.querySelector('[data-testid="success-message"], [data-testid="error-message"], .field-error');
         if (!alert || !alert.textContent.trim()) {
@@ -36,7 +44,7 @@
                 event.preventDefault();
                 pendingForm = button.closest('form');
                 requiredText = button.getAttribute('data-confirm-required-text') || '';
-                message.textContent = button.getAttribute('data-confirm-message') || 'Delete this item?';
+                message.textContent = button.getAttribute('data-confirm-message') || i18n('delete-item', 'Delete this item?');
                 if (confirmationField && confirmationInput) {
                     confirmationField.hidden = !requiredText;
                     confirmationInput.value = '';
@@ -120,7 +128,7 @@
             });
 
             if (emptyCell) {
-                emptyCell.textContent = query ? 'No results found.' : 'No tasks found.';
+                emptyCell.textContent = query ? i18n('no-results', 'No results found.') : i18n('empty-tasks', 'No tasks found.');
             }
             emptyRow.hidden = visibleCount !== 0;
         }
@@ -194,7 +202,7 @@
             });
 
             if (emptyCell) {
-                emptyCell.textContent = title || globalQuery ? 'No results found.' : 'No issues found.';
+                emptyCell.textContent = title || globalQuery ? i18n('no-results', 'No results found.') : i18n('empty-issues', 'No issues found.');
             }
             emptyRow.hidden = visibleCount !== 0;
         }
@@ -306,8 +314,160 @@
     function updateSortIndicators(table, sortState) {
         table.querySelectorAll('[data-sort-indicator]').forEach(function (indicator) {
             var key = indicator.getAttribute('data-sort-indicator');
-            indicator.textContent = key === sortState.key ? (sortState.direction === 'asc' ? '↑' : '↓') : '';
+            indicator.textContent = key === sortState.key ? (sortState.direction === 'asc' ? '^' : 'v') : '';
         });
+    }
+
+    var contentTranslationsToSpanish = {
+        'Review automation strategy': 'Revisar la estrategia de automatizacion',
+        'Create UI smoke tests': 'Crear pruebas de humo de interfaz',
+        'Prepare negative API cases': 'Preparar casos negativos de API',
+        'Update regression checklist': 'Actualizar la lista de regresion',
+        'Validate permission matrix': 'Validar la matriz de permisos',
+        'User cannot edit another user\'s issue': 'El usuario no puede editar la incidencia de otro usuario',
+        'RBAC negative case for issue modification via UI and API.': 'Caso negativo de RBAC para modificar incidencias desde la interfaz y la API.',
+        'Upload validation for issue comments': 'Validacion de subida para comentarios de incidencias',
+        'Verify that PNG, JPG and MP4 files are accepted while unsupported files are rejected.': 'Verificar que los archivos PNG, JPG y MP4 se aceptan mientras los archivos no soportados se rechazan.',
+        'Admin reviews issue workflow': 'El administrador revisa el flujo de incidencias',
+        'Admin-visible issue used for dashboard and label management smoke checks.': 'Incidencia visible para administracion usada en comprobaciones de humo del panel y la gestion de etiquetas.',
+        'Seed comment for permission regression testing.': 'Comentario semilla para pruebas de regresion de permisos.',
+        'Seed comment for attachment upload testing.': 'Comentario semilla para pruebas de subida de adjuntos.',
+        'Initial RBAC reproduction note.': 'Nota inicial de reproduccion de RBAC.',
+        'Attachment scenarios are ready for manual API checks.': 'Los escenarios de adjuntos estan preparados para comprobaciones manuales de API.',
+        'Waiting for workflow clarification.': 'Pendiente de aclaracion del flujo de trabajo.',
+        'Final demo issue comment for deterministic count checks.': 'Comentario final de incidencia demo para comprobaciones deterministas de recuento.'
+    };
+
+    var contentGlossaryToSpanish = [
+        ['Demo task', 'Tarea demo'],
+        ['Demo issue', 'Incidencia demo'],
+        ['Verify', 'Verificar'],
+        ['Review', 'Revisar'],
+        ['Create', 'Crear'],
+        ['Complete', 'Completar'],
+        ['Update', 'Actualizar'],
+        ['Validate', 'Validar'],
+        ['Prepare', 'Preparar'],
+        ['Confirm', 'Confirmar'],
+        ['Check', 'Comprobar'],
+        ['Run', 'Ejecutar'],
+        ['Search', 'Buscar'],
+        ['Issues', 'Incidencias'],
+        ['issues', 'incidencias'],
+        ['Issue', 'Incidencia'],
+        ['issue', 'incidencia'],
+        ['Tasks', 'Tareas'],
+        ['tasks', 'tareas'],
+        ['Task', 'Tarea'],
+        ['task', 'tarea'],
+        ['Dashboard', 'Panel'],
+        ['dashboard', 'panel'],
+        ['Workflow', 'Flujo de trabajo'],
+        ['workflow', 'flujo de trabajo'],
+        ['permissions', 'permisos'],
+        ['permission', 'permiso'],
+        ['attachments', 'adjuntos'],
+        ['attachment', 'adjunto'],
+        ['upload', 'subida'],
+        ['validation', 'validacion'],
+        ['regression', 'regresion'],
+        ['security', 'seguridad'],
+        ['labels', 'etiquetas'],
+        ['label', 'etiqueta'],
+        ['sorting', 'ordenacion'],
+        ['filtering', 'filtrado'],
+        ['filter', 'filtro'],
+        ['manual', 'manual'],
+        ['API', 'API'],
+        ['UI', 'interfaz'],
+        ['data', 'datos'],
+        ['negative', 'negativo'],
+        ['positive', 'positivo'],
+        ['boundary', 'limite'],
+        ['default', 'por defecto'],
+        ['user', 'usuario'],
+        ['admin', 'administrador'],
+        ['owner', 'propietario'],
+        ['priority', 'prioridad'],
+        ['status', 'estado'],
+        ['date', 'fecha'],
+        ['title', 'titulo'],
+        ['description', 'descripcion']
+    ];
+
+    function setupContentTranslation() {
+        var toggle = document.querySelector('[data-content-translation-toggle]');
+        var targets = Array.prototype.slice.call(document.querySelectorAll('[data-content-translatable="true"]'));
+        if (!toggle || !targets.length) {
+            return;
+        }
+        var translated = false;
+        var translateLabel = i18n('content-translate', 'Translate content');
+        var originalLabel = i18n('content-original', 'Show original');
+
+        toggle.textContent = translateLabel;
+        toggle.setAttribute('aria-pressed', 'false');
+        targets.forEach(function (target) {
+            target.setAttribute('data-content-original', target.textContent || '');
+        });
+
+        toggle.addEventListener('click', function () {
+            translated = !translated;
+            targets.forEach(function (target) {
+                var original = target.getAttribute('data-content-original') || '';
+                target.textContent = translated ? translateUserContent(original) : original;
+            });
+            toggle.textContent = translated ? originalLabel : translateLabel;
+            toggle.setAttribute('aria-pressed', String(translated));
+        });
+    }
+
+    function translateUserContent(text) {
+        var lang = (document.documentElement.getAttribute('lang') || 'en').toLowerCase();
+        if (lang.indexOf('es') === 0) {
+            return translateWithGlossary(text, contentTranslationsToSpanish, contentGlossaryToSpanish);
+        }
+        return translateWithGlossary(text, reverseDictionary(contentTranslationsToSpanish), reverseGlossary(contentGlossaryToSpanish));
+    }
+
+    function translateWithGlossary(text, dictionary, glossary) {
+        var value = String(text || '');
+        if (!value.trim()) {
+            return value;
+        }
+        if (dictionary[value]) {
+            return dictionary[value];
+        }
+        var translated = value;
+        Object.keys(dictionary)
+            .sort(function (left, right) {
+                return right.length - left.length;
+            })
+            .forEach(function (source) {
+                translated = translated.replace(new RegExp(escapeRegExp(source), 'g'), dictionary[source]);
+            });
+        glossary.forEach(function (entry) {
+            translated = translated.replace(new RegExp('\\b' + escapeRegExp(entry[0]) + '\\b', 'g'), entry[1]);
+        });
+        return translated;
+    }
+
+    function reverseDictionary(dictionary) {
+        var reversed = {};
+        Object.keys(dictionary).forEach(function (key) {
+            reversed[dictionary[key]] = key;
+        });
+        return reversed;
+    }
+
+    function reverseGlossary(glossary) {
+        return glossary.map(function (entry) {
+            return [entry[1], entry[0]];
+        });
+    }
+
+    function escapeRegExp(value) {
+        return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     function setupNotifications() {
@@ -364,5 +524,6 @@
         setupNotifications();
         setupDashboardRows();
         setupDashboardSidebarToggle();
+        setupContentTranslation();
     });
 })();

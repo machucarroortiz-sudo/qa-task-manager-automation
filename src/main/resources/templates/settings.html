@@ -1,106 +1,86 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Settings - QA Task Manager SUT</title>
+    <title th:text="|#{settings.title} - #{app.fullName}|">Settings - QA Task Manager SUT</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <script defer th:src="@{/js/ui.js}"></script>
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body" th:attr="data-i18n-no-results=#{empty.results},data-i18n-empty-tasks=#{empty.tasks},data-i18n-empty-issues=#{empty.issues},data-i18n-delete-item=#{modal.delete.item},data-i18n-content-translate=#{contentTranslation.toggle},data-i18n-content-original=#{contentTranslation.showOriginal}">
 <div class="dashboard-shell is-sidebar-collapsed settings-shell">
-    <aside class="dashboard-sidebar" data-testid="dashboard-navigation">
-        <a th:href="@{/dashboard}" class="dashboard-brand" data-testid="nav-dashboard-brand-link">
-            <span class="dashboard-brand-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z"></path><path d="M9 12l2 2 4-5"></path><path d="M9 7h6"></path></svg>
-            </span>
-            <span><strong>QA Task Manager</strong><small>SUT</small></span>
-        </a>
-        <nav class="dashboard-side-nav" aria-label="Settings navigation">
-            <a th:href="@{/dashboard}" data-testid="nav-dashboard-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4z"></path><path d="M13 4h7v7h-7z"></path><path d="M4 13h7v7H4z"></path><path d="M13 13h7v7h-7z"></path></svg>Dashboard</a>
-            <a th:href="@{/tasks}" data-testid="nav-tasks-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12"></path><path d="M8 12h12"></path><path d="M8 18h12"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>Tasks</a>
-            <a th:href="@{/issues}" data-testid="nav-issues-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 4.2 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"></path></svg>Issues</a>
-            <a th:href="@{/admin}" data-testid="nav-admin-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Users/Admin</a>
-            <a th:href="@{/settings}" class="is-active" data-testid="nav-settings-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 0 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>Settings</a>
-        </nav>
-        <div class="dashboard-sidebar-spacer" aria-hidden="true"></div>
-    </aside>
+    <aside th:replace="~{fragments/navigation :: dashboardSidebar('settings', 'settings.title')}"></aside>
 
     <div class="dashboard-main-shell">
         <header class="dashboard-topbar">
-            <button type="button" class="dashboard-menu-button" data-testid="dashboard-sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
-            <strong>Settings</strong>
-            <div class="dashboard-topbar-actions">
-                <div class="dashboard-search"><input type="search" placeholder="Search..." data-testid="global-search-input" aria-label="Global search"><svg viewBox="0 0 24 24" role="img" aria-label="Search icon"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg></div>
-                <div class="notification-panel"><button type="button" class="notification-bell" data-testid="notification-bell" aria-expanded="false" aria-controls="notification-dropdown"><svg viewBox="0 0 24 24" role="img" aria-label="Notifications"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><span class="notification-badge" data-testid="unread-notification-badge" th:text="${unreadNotificationCount}" th:hidden="${unreadNotificationCount == 0}"></span></button><section id="notification-dropdown" class="notification-dropdown" data-testid="notification-dropdown" hidden><div class="notification-dropdown-header"><strong>Notifications</strong><span th:text="${unreadNotificationCount + ' unread'}"></span></div><p class="notification-empty" th:if="${#lists.isEmpty(notifications)}">No unread notifications.</p><article class="notification-item" data-testid="notification-item" th:each="notification : ${notifications}"><div><span class="notification-type" th:text="${notification.type()}"></span><p th:text="${notification.message()}"></p><small th:text="${notification.createdAt()}"></small></div><form th:action="@{/dashboard/notifications/{id}/read(id=${notification.id()})}" method="post"><button type="submit" class="notification-read-button" data-testid="mark-notification-read-button">Read</button></form></article></section></div>
-                <a th:href="@{/profile}" class="dashboard-topbar-user" data-testid="nav-profile-link"><span class="dashboard-avatar" th:text="${#strings.substring(currentUser.email, 0, 1).toUpperCase()}"></span><span><strong th:text="${currentUser.email}"></strong><small th:text="${currentUser.role}"></small></span></a>
-                <form th:action="@{/logout}" method="post" data-testid="nav-logout-form"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit" class="dashboard-topbar-logout" data-testid="nav-logout-button" aria-label="Log out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button></form>
-            </div>
+            <button type="button" class="dashboard-menu-button" data-testid="dashboard-sidebar-toggle" th:attr="aria-label=#{common.toggleSidebar}" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+            <strong th:text="#{settings.title}">Settings</strong>
+            <div th:replace="~{fragments/navigation :: topbarActions}"></div>
         </header>
 
         <main class="dashboard-page settings-page">
             <section class="app-page-heading">
-                <h1 data-testid="settings-title">Settings</h1>
-                <p>Manage deterministic SUT data for local UI and API testing.</p>
+                <h1 data-testid="settings-title" th:text="#{settings.title}">Settings</h1>
+                <p th:text="#{settings.subtitle}">Manage deterministic SUT data for local UI and API testing.</p>
             </section>
-            <section class="settings-admin-note" data-testid="settings-admin-only-note">
+            <section class="settings-admin-note" data-testid="settings-admin-only-note" th:text="#{settings.adminNote}">
                 These actions are ADMIN only and affect shared SUT test data. Use them before test setup or controlled exploratory sessions.
             </section>
 
-            <div th:if="${successMessage}" class="alert success task-page-alert" th:text="${successMessage}" data-testid="settings-success-message"></div>
-            <div th:if="${errorMessage}" class="alert error task-page-alert" th:text="${errorMessage}" data-testid="settings-error-message"></div>
+            <div th:if="${successMessageKey != null or successMessage != null}" class="alert success task-page-alert" th:text="${successMessageKey != null ? #messages.msg(successMessageKey) : successMessage}" data-testid="settings-success-message"></div>
+            <div th:if="${errorMessageKey != null or errorMessage != null}" class="alert error task-page-alert" th:text="${errorMessageKey != null ? #messages.msg(errorMessageKey) : errorMessage}" data-testid="settings-error-message"></div>
             <div th:if="${dataSummary}" class="settings-summary-message" data-testid="settings-data-summary">
-                <span th:text="${dataSummary.users()} + ' users'"></span>
-                <span th:text="${dataSummary.tasks()} + ' tasks'"></span>
-                <span th:text="${dataSummary.issues()} + ' issues'"></span>
-                <span th:text="${dataSummary.labels()} + ' labels'"></span>
+                <span th:text="#{settings.summary.users(${dataSummary.users()})}"></span>
+                <span th:text="#{settings.summary.tasks(${dataSummary.tasks()})}"></span>
+                <span th:text="#{settings.summary.issues(${dataSummary.issues()})}"></span>
+                <span th:text="#{settings.summary.labels(${dataSummary.labels()})}"></span>
             </div>
             <div class="toast" data-testid="toast-notification" role="status"></div>
 
             <section class="settings-grid">
                 <article class="settings-card" data-testid="settings-reset-card">
-                    <h2>Reset SUT Data</h2>
-                    <p>Restore the compact default seed data: demo users, baseline tasks, labels, issues, and comments.</p>
+                    <h2 th:text="#{settings.reset.title}">Reset SUT Data</h2>
+                    <p th:text="#{settings.reset.description}">Restore the compact default seed data: demo users, baseline tasks, labels, issues, and comments.</p>
                     <form th:action="@{/settings/reset}" method="post">
-                        <button type="submit" class="settings-danger-button" data-confirm-delete="true" data-confirm-message="Reset SUT data to the default seed state?" data-testid="settings-reset-data-button">Reset data</button>
+                        <button type="submit" class="settings-danger-button" data-confirm-delete="true" th:attr="data-confirm-message=#{settings.reset.confirm}" data-testid="settings-reset-data-button" th:text="#{settings.reset.button}">Reset data</button>
                     </form>
                 </article>
 
                 <article class="settings-card settings-clear-card" data-testid="settings-clear-card">
-                    <h2>Clear All Data</h2>
-                    <p>This destructive action deletes all tasks, issues, labels, comments, attachments, notifications, and non-admin users. It keeps only the minimum admin account required to sign in again.</p>
+                    <h2 th:text="#{settings.clear.title}">Clear All Data</h2>
+                    <p th:text="#{settings.clear.description}">This destructive action deletes all tasks, issues, labels, comments, attachments, notifications, and non-admin users. It keeps only the minimum admin account required to sign in again.</p>
                     <form th:action="@{/settings/clear}" method="post" data-testid="settings-clear-data-form">
                         <button type="submit"
                                 class="settings-danger-button"
                                 data-confirm-delete="true"
-                                data-confirm-message="This will permanently clear all SUT data and cannot be undone. Type CLEAR DATA to confirm."
+                                th:attr="data-confirm-message=#{settings.clear.confirm},data-confirm-required-text=#{settings.clear.required}"
                                 data-confirm-required-text="CLEAR DATA"
-                                data-testid="settings-clear-data-button">Clear all data</button>
+                                data-testid="settings-clear-data-button" th:text="#{settings.clear.button}">Clear all data</button>
                     </form>
                 </article>
 
                 <article class="settings-card" data-testid="settings-demo-card">
-                    <h2>Default Demo Data</h2>
-                    <p>Load the bundled demodata file with default users, 25 tasks, and 25 issues for broader exploratory and automated checks.</p>
+                    <h2 th:text="#{settings.demo.title}">Default Demo Data</h2>
+                    <p th:text="#{settings.demo.description}">Load the bundled demodata file with default users, 25 tasks, and 25 issues for broader exploratory and automated checks.</p>
                     <form th:action="@{/settings/demo}" method="post">
-                        <button type="submit" class="form-save-button" data-testid="settings-load-demodata-button">Load demodata</button>
+                        <button type="submit" class="form-save-button" data-testid="settings-load-demodata-button" th:text="#{settings.demo.button}">Load demodata</button>
                     </form>
                 </article>
 
-                <article class="settings-card settings-card-wide" data-testid="settings-import-card">
-                    <h2>Import Data</h2>
-                    <p>Import a controlled JSON data file using the same structure as <code>demodata.json</code>. SQL upload is intentionally not supported from the UI.</p>
+                <article class="settings-card settings-import-card" data-testid="settings-import-card">
+                    <h2 th:text="#{settings.import.title}">Import Data</h2>
+                    <p th:text="#{settings.import.description}">Import a controlled JSON data file using the same structure as demodata.json. SQL upload is intentionally not supported from the UI.</p>
                     <form th:action="@{/settings/import}" method="post" enctype="multipart/form-data" class="settings-import-form" data-testid="settings-import-form">
-                        <label for="importFile">JSON data file</label>
+                        <label for="importFile" th:text="#{settings.import.file}">JSON data file</label>
                         <input id="importFile" type="file" name="file" accept=".json,application/json" data-testid="settings-import-file-input">
-                        <button type="submit" class="form-save-button" data-testid="settings-import-data-button">Import data</button>
+                        <button type="submit" class="form-save-button" data-testid="settings-import-data-button" th:text="#{settings.import.button}">Import data</button>
                     </form>
                 </article>
             </section>
 
             <section class="settings-note" data-testid="settings-data-note">
-                <h2>Included demo users</h2>
+                <h2 th:text="#{settings.demoUsers}">Included demo users</h2>
                 <table>
-                    <thead><tr><th>Email</th><th>Password</th><th>Role</th></tr></thead>
+                    <thead><tr><th th:text="#{common.email}">Email</th><th th:text="#{common.password}">Password</th><th th:text="#{common.role}">Role</th></tr></thead>
                     <tbody>
                     <tr><td>admin@example.com</td><td>password123</td><td>ADMIN</td></tr>
                     <tr><td>user1@example.com</td><td>password123</td><td>USER</td></tr>
@@ -111,15 +91,15 @@
 
             <div class="modal-backdrop" data-testid="settings-confirmation-modal" role="dialog" aria-modal="true">
                 <div class="modal">
-                    <p data-testid="delete-confirmation-message">Reset SUT data?</p>
+                    <p data-testid="delete-confirmation-message" th:text="#{settings.confirmReset}">Reset SUT data?</p>
                     <div class="confirmation-text-field" data-testid="clear-data-confirmation-field" hidden>
-                        <label for="confirmationText">Confirmation text</label>
+                        <label for="confirmationText" th:text="#{settings.confirmationText}">Confirmation text</label>
                         <input id="confirmationText" type="text" autocomplete="off" data-testid="clear-data-confirmation-input">
-                        <small>Type <strong>CLEAR DATA</strong> to enable confirmation.</small>
+                        <small th:text="#{settings.confirmationHelp}">Type CLEAR DATA to enable confirmation.</small>
                     </div>
                     <div class="actions">
-                        <button type="button" class="secondary" data-testid="delete-cancel-button">Cancel</button>
-                        <button type="button" class="danger" data-testid="delete-confirm-button">Confirm</button>
+                        <button type="button" class="secondary" data-testid="delete-cancel-button" th:text="#{common.cancel}">Cancel</button>
+                        <button type="button" class="danger" data-testid="delete-confirm-button" th:text="#{common.confirm}">Confirm</button>
                     </div>
                 </div>
             </div>

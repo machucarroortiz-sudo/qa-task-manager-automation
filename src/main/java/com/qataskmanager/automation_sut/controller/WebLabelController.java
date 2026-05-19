@@ -39,7 +39,7 @@ public class WebLabelController {
             return "admin/labels";
         }
         labelService.createLabel(label.toLabelRequest());
-        redirectAttributes.addFlashAttribute("successMessage", "Label created successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.label.created");
         return "redirect:/admin/labels";
     }
 
@@ -47,18 +47,18 @@ public class WebLabelController {
     public String update(@PathVariable Long id, @Valid @ModelAttribute("label") WebLabelForm label,
                          BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Label name and hex color are required");
+            redirectAttributes.addFlashAttribute("errorMessageKey", "flash.label.invalid");
             return "redirect:/admin/labels";
         }
         labelService.updateLabel(id, label.toLabelRequest());
-        redirectAttributes.addFlashAttribute("successMessage", "Label updated successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.label.updated");
         return "redirect:/admin/labels";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         labelService.deleteLabel(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Label deleted successfully");
+        redirectAttributes.addFlashAttribute("successMessageKey", "flash.label.deleted");
         return "redirect:/admin/labels";
     }
 

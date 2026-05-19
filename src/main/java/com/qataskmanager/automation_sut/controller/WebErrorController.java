@@ -15,16 +15,12 @@ public class WebErrorController implements ErrorController {
         Object statusAttribute = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         int status = statusAttribute == null ? 500 : Integer.parseInt(statusAttribute.toString());
         HttpStatus httpStatus = HttpStatus.resolve(status);
-        String title = status == 403 ? "Access denied" : status == 404 ? "Page not found" : "Unexpected error";
-        String message = status == 403
-                ? "You do not have permission to access this page."
-                : status == 404
-                ? "The page you requested does not exist."
-                : "The SUT could not complete the request.";
+        String titleKey = status == 403 ? "error.accessDenied.title" : status == 404 ? "error.notFound.title" : "error.unexpected.title";
+        String messageKey = status == 403 ? "error.accessDenied.message" : status == 404 ? "error.notFound.message" : "error.unexpected.message";
         model.addAttribute("status", status);
         model.addAttribute("error", httpStatus == null ? "Error" : httpStatus.getReasonPhrase());
-        model.addAttribute("title", title);
-        model.addAttribute("message", message);
+        model.addAttribute("titleKey", titleKey);
+        model.addAttribute("messageKey", messageKey);
         return "error/system";
     }
 }

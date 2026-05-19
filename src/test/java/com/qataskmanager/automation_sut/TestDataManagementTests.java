@@ -125,4 +125,60 @@ class TestDataManagementTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/settings"));
     }
+
+    @Test
+    void defaultLocaleRendersEnglishLoginUi() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Welcome back")))
+                .andExpect(content().string(containsString("Language")))
+                .andExpect(content().string(containsString("name=\"_csrf\"")));
+    }
+
+    @Test
+    void seededUserCanLogInThroughUiWithCsrf() throws Exception {
+        mockMvc.perform(post("/login")
+                        .param("email", "admin@example.com")
+                        .param("password", "password123")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/dashboard"));
+    }
+
+    @Test
+    void spanishLocaleRendersSpanishLoginUi() throws Exception {
+        mockMvc.perform(get("/login").param("lang", "es"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Bienvenido de nuevo")))
+                .andExpect(content().string(containsString("Idioma")));
+    }
+
+    @Test
+    @WithMockUser(username = "admin@example.com", roles = "ADMIN")
+    void taskDetailsPageExposesSeparateContentTranslationControl() throws Exception {
+        mockMvc.perform(get("/tasks/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("data-content-translation-toggle")))
+                .andExpect(content().string(containsString("tooltip-bubble")))
+                .andExpect(content().string(containsString("data-content-translatable=\"true\"")));
+    }
+
+    @Test
+    @WithMockUser(username = "admin@example.com", roles = "ADMIN")
+    void issueDetailsPageExposesSeparateContentTranslationControl() throws Exception {
+        mockMvc.perform(get("/issues/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("data-content-translation-toggle")))
+                .andExpect(content().string(containsString("tooltip-bubble")))
+                .andExpect(content().string(containsString("data-content-translatable=\"true\"")));
+    }
+
+    @Test
+    @WithMockUser(username = "admin@example.com", roles = "ADMIN")
+    void spanishLocaleRendersTranslatedTaskListUi() throws Exception {
+        mockMvc.perform(get("/tasks").param("lang", "es"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Mis tareas")))
+                .andExpect(content().string(containsString("Traducir contenido")));
+    }
 }
