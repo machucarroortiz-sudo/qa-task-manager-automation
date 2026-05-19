@@ -99,6 +99,22 @@ Authorization: Bearer <token>
 - `POST /api/tasks/{id}/complete`
 - `DELETE /api/tasks/{id}`
 
+Supported task list query parameters:
+
+- `status`
+- `priority`
+- `search`
+- `page`
+- `size`
+
+Example:
+
+```text
+GET /api/tasks?status=IN_PROGRESS&search=review&page=0&size=10
+```
+
+Task and issue list endpoints return a paginated response with `content`, `page`, `size`, `totalElements`, `totalPages`, `first`, and `last`.
+
 ### Issue CRUD
 
 - `GET /api/issues`
@@ -106,6 +122,21 @@ Authorization: Bearer <token>
 - `GET /api/issues/{id}`
 - `PUT /api/issues/{id}`
 - `DELETE /api/issues/{id}`
+
+Supported issue list query parameters:
+
+- `status`
+- `priority`
+- `search`
+- `label`
+- `page`
+- `size`
+
+Example:
+
+```text
+GET /api/issues?status=OPEN&priority=HIGH&label=security&page=0&size=10
+```
 
 ### Issue Comments and Attachments
 
@@ -130,6 +161,51 @@ Authorization: Bearer <token>
 ### Test Data
 
 - `POST /api/test-data/reset` admin only, enabled in `local` and `test` profiles
+- `POST /api/test-data/demo` admin only, loads bundled `demodata.json`
+- `POST /api/test-data/import` admin only, imports controlled JSON data
+
+### Dashboard and Notifications
+
+- `GET /api/dashboard/summary`
+- `GET /api/notifications`
+- `POST /api/notifications/{id}/read`
+
+Example dashboard response:
+
+```json
+{
+  "tasks": {
+    "total": 25,
+    "todo": 9,
+    "inProgress": 7,
+    "done": 7,
+    "cancelled": 2
+  },
+  "issues": {
+    "total": 25,
+    "open": 8,
+    "inProgress": 4,
+    "blocked": 4,
+    "resolved": 4,
+    "closed": 3,
+    "cancelled": 2
+  },
+  "unreadNotifications": 0
+}
+```
+
+### Health
+
+- `GET /api/health`
+
+Example:
+
+```json
+{
+  "status": "UP",
+  "database": "UP"
+}
+```
 
 ### Example Task Request
 
@@ -161,13 +237,66 @@ Validation and authorization failures return consistent JSON error responses wit
 
 ## Test Data Management
 
-The reset endpoint is designed for automation setup and cleanup:
+The Settings section is available from the main navigation for admin users. It provides controlled data actions for local setup, exploratory checks, and repeatable automation preparation.
+
+Available UI actions:
+
+- Reset SUT Data: restores the compact default seed data.
+- Clear All Data: deletes tasks, issues, labels, comments, attachments, notifications, and non-admin users, then keeps only the default admin account so the app remains accessible.
+- Load demodata: loads bundled `src/main/resources/demodata.json`.
+- Import Data: imports a controlled `.json` file using the same structure as `demodata.json`.
+
+The import feature intentionally uses JSON instead of arbitrary SQL. The application uses Spring Data JPA with H2 locally and PostgreSQL in Docker, so JSON import keeps the operation portable, validates known fields and enums, and avoids executing uncontrolled SQL from the UI.
+
+The reset endpoint is also available for automation setup and cleanup:
 
 ```bash
 POST /api/test-data/reset
 ```
 
-It is restricted to admin users and only registered when the `local` or `test` Spring profile is active. This keeps test utility behavior explicit and easy to audit.
+The clear endpoint performs the destructive empty-state setup:
+
+```bash
+POST /api/test-data/clear
+```
+
+After clearing data, sign in with `admin@example.com / password123`. The system contains one admin user and no tasks, issues, labels, comments, attachments, or notifications.
+
+The demo data endpoint loads the larger deterministic dataset:
+
+```bash
+POST /api/test-data/demo
+```
+
+The import endpoint accepts a multipart JSON file:
+
+```bash
+POST /api/test-data/import
+```
+
+These endpoints are restricted to admin users and only registered when the `local` or `test` Spring profile is active. This keeps test utility behavior explicit and easy to audit.
+
+Test data endpoints return deterministic counts:
+
+```json
+{
+  "message": "Demo data loaded",
+  "users": 3,
+  "tasks": 25,
+  "issues": 25,
+  "labels": 8,
+  "comments": 4
+}
+```
+
+Bundled demo data includes:
+
+- `admin@example.com / password123 / ADMIN`
+- `user1@example.com / password123 / USER`
+- `user2@example.com / password123 / USER`
+- 25 deterministic tasks
+- 25 deterministic issues
+- Labels and comments useful for filtering, sorting, RBAC, validation, and regression checks
 
 Default local H2 database:
 
@@ -180,7 +309,7 @@ Default local H2 database:
 ## Project Structure
 
 ```text
-src/main/java/com/portfolio/automation_sut
+src/main/java/com/qataskmanager/automation_sut
   config        Spring Security, OpenAPI, seed data
   controller    REST and web controllers
   dto           Request, response, and error contracts
@@ -210,6 +339,8 @@ src/test/java
 - Layered architecture keeps business rules traceable from controller to service.
 - Swagger/OpenAPI supports exploratory testing with Postman and manual API checks.
 - The SUT does not include an automation test suite by design.
+- `SELECTORS.md` documents stable `data-testid` values for UI automation.
+- `RBAC_MATRIX.md` documents expected role-based permissions.
 
 ## Access from LAN
 

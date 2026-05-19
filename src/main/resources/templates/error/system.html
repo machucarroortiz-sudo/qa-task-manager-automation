@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${status} + ' - QA Task Manager SUT'">Error - QA Task Manager SUT</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="login-body">
+<main class="error-page" data-testid="error-page">
+    <section class="error-card">
+        <div class="login-brand-icon error-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 4.2 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"></path></svg>
+        </div>
+        <p class="error-status" th:text="${status}" data-testid="error-status">404</p>
+        <h1 th:text="${title}" data-testid="error-title">Page not found</h1>
+        <p th:text="${message}" data-testid="error-message">The page you requested does not exist.</p>
+        <div class="form-actions">
+            <a th:href="@{/dashboard}" class="form-save-button" data-testid="error-dashboard-link">Dashboard</a>
+            <a th:href="@{/login}" class="form-cancel-button" data-testid="error-login-link">Login</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

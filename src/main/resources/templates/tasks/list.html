@@ -6,83 +6,203 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <script defer th:src="@{/js/ui.js}"></script>
 </head>
-<body>
-<div th:replace="~{fragments/navigation :: mainNav}"></div>
-<main class="page">
-    <nav class="topbar">
-        <h1 data-testid="task-list-title">My Tasks</h1>
-        <div class="actions">
-            <a th:href="@{/tasks/new}" data-testid="create-task-link">New task</a>
-            <a th:if="${isAdmin}" th:href="@{/admin}" data-testid="admin-dashboard-link">Admin dashboard</a>
-        </div>
-    </nav>
+<body class="dashboard-body">
+<div class="dashboard-shell is-sidebar-collapsed tasks-shell">
+    <aside class="dashboard-sidebar" data-testid="dashboard-navigation">
+        <a th:href="@{/dashboard}" class="dashboard-brand" data-testid="nav-dashboard-brand-link">
+            <span class="dashboard-brand-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z"></path>
+                    <path d="M9 12l2 2 4-5"></path>
+                    <path d="M9 7h6"></path>
+                </svg>
+            </span>
+            <span>
+                <strong>QA Task Manager</strong>
+                <small>SUT</small>
+            </span>
+        </a>
 
-    <div th:if="${successMessage}" class="alert success" th:text="${successMessage}" data-testid="success-message"></div>
-    <div class="toast" data-testid="toast-notification" role="status"></div>
+        <nav class="dashboard-side-nav" aria-label="Tasks navigation">
+            <a th:href="@{/dashboard}" data-testid="nav-dashboard-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4z"></path><path d="M13 4h7v7h-7z"></path><path d="M4 13h7v7H4z"></path><path d="M13 13h7v7h-7z"></path></svg>
+                Dashboard
+            </a>
+            <a th:href="@{/tasks}" class="is-active" data-testid="nav-tasks-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12"></path><path d="M8 12h12"></path><path d="M8 18h12"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>
+                Tasks
+            </a>
+            <a th:href="@{/issues}" data-testid="nav-issues-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 4.2 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"></path></svg>
+                Issues
+            </a>
+            <a th:href="@{/admin}" data-testid="nav-admin-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Users/Admin
+            </a>
+            <a th:if="${isAdmin}" th:href="@{/settings}" data-testid="nav-settings-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 0 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>Settings</a>
+        </nav>
 
-    <section class="filters" data-testid="task-filters">
-        <label for="taskStatusFilter">Status</label>
-        <select id="taskStatusFilter" data-testid="task-status-filter">
-            <option value="">All statuses</option>
-            <option value="TODO">TODO</option>
-            <option value="IN_PROGRESS">IN_PROGRESS</option>
-            <option value="DONE">DONE</option>
-            <option value="CANCELLED">CANCELLED</option>
-        </select>
+        <div class="dashboard-sidebar-spacer" aria-hidden="true"></div>
+    </aside>
 
-        <button type="button" class="secondary" data-testid="clear-task-filters-button">Clear filters</button>
-    </section>
-
-    <table data-testid="task-table">
-        <thead>
-        <tr>
-            <th><button type="button" class="sort-header" data-sort-key="title" data-testid="task-sort-title">Title <span data-sort-indicator="title" data-testid="task-sort-title-indicator"></span></button></th>
-            <th><button type="button" class="sort-header" data-sort-key="status" data-testid="task-sort-status">Status <span data-sort-indicator="status" data-testid="task-sort-status-indicator"></span></button></th>
-            <th><button type="button" class="sort-header" data-sort-key="priority" data-testid="task-sort-priority">Priority <span data-sort-indicator="priority" data-testid="task-sort-priority-indicator"></span></button></th>
-            <th><button type="button" class="sort-header" data-sort-key="dueDate" data-testid="task-sort-due-date">Due date <span data-sort-indicator="dueDate" data-testid="task-sort-due-date-indicator"></span></button></th>
-            <th><button type="button" class="sort-header" data-sort-key="owner" data-testid="task-sort-owner">Owner <span data-sort-indicator="owner" data-testid="task-sort-owner-indicator"></span></button></th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="task : ${tasks}"
-            th:attr="data-testid='task-row-' + ${task.id()},data-status=${task.status()},data-sort-title=${task.title()},data-sort-status=${task.status()},data-sort-priority=${task.priority()},data-sort-dueDate=${task.dueDate()},data-sort-owner=${task.ownerEmail()}">
-            <td th:text="${task.title()}" th:attr="data-testid='task-title-' + ${task.id()}"></td>
-            <td>
-                <span th:text="${task.status()}"
-                      th:class="'status-badge status-' + ${task.status()}"
-                      th:attr="data-testid='task-status-' + ${task.id()}"></span>
-            </td>
-            <td th:text="${task.priority()}" th:attr="data-testid='task-priority-' + ${task.id()}"></td>
-            <td th:text="${task.dueDate()}" th:attr="data-testid='task-due-date-' + ${task.id()}"></td>
-            <td th:text="${task.ownerEmail()}" th:attr="data-testid='task-owner-' + ${task.id()}"></td>
-            <td class="row-actions">
-                <a th:href="@{/tasks/{id}(id=${task.id()})}" th:attr="data-testid='view-task-' + ${task.id()}">View</a>
-                <a th:href="@{/tasks/{id}/edit(id=${task.id()})}" th:attr="data-testid='edit-task-' + ${task.id()}">Edit</a>
-                <form th:action="@{/tasks/{id}/complete(id=${task.id()})}" method="post">
-                    <button type="submit" class="secondary" th:attr="data-testid='complete-task-' + ${task.id()}">Complete</button>
+    <div class="dashboard-main-shell">
+        <header class="dashboard-topbar">
+            <button type="button" class="dashboard-menu-button" data-testid="dashboard-sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+            </button>
+            <strong>Tasks</strong>
+            <div class="dashboard-topbar-actions">
+                <div class="dashboard-search">
+                    <input type="search" placeholder="Search..." data-testid="global-search-input" aria-label="Global search">
+                    <svg viewBox="0 0 24 24" role="img" aria-label="Search icon">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m16 16 4 4"></path>
+                    </svg>
+                </div>
+                <div class="notification-panel">
+                    <button type="button" class="notification-bell" data-testid="notification-bell" aria-expanded="false" aria-controls="notification-dropdown">
+                        <svg viewBox="0 0 24 24" role="img" aria-label="Notifications">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                            <path d="M10 21h4"></path>
+                        </svg>
+                        <span class="notification-badge" data-testid="unread-notification-badge" th:text="${unreadNotificationCount}" th:hidden="${unreadNotificationCount == 0}"></span>
+                    </button>
+                    <section id="notification-dropdown" class="notification-dropdown" data-testid="notification-dropdown" hidden>
+                        <div class="notification-dropdown-header">
+                            <strong>Notifications</strong>
+                            <span th:text="${unreadNotificationCount + ' unread'}"></span>
+                        </div>
+                        <p class="notification-empty" th:if="${#lists.isEmpty(notifications)}">No unread notifications.</p>
+                        <article class="notification-item" data-testid="notification-item" th:each="notification : ${notifications}">
+                            <div>
+                                <span class="notification-type" th:text="${notification.type()}"></span>
+                                <p th:text="${notification.message()}"></p>
+                                <small th:text="${notification.createdAt()}"></small>
+                            </div>
+                            <form th:action="@{/dashboard/notifications/{id}/read(id=${notification.id()})}" method="post">
+                                <button type="submit" class="notification-read-button" data-testid="mark-notification-read-button">Read</button>
+                            </form>
+                        </article>
+                    </section>
+                </div>
+                <a th:href="@{/profile}" class="dashboard-topbar-user" data-testid="nav-profile-link">
+                    <span class="dashboard-avatar" th:text="${#strings.substring(currentUser.email, 0, 1).toUpperCase()}"></span>
+                    <span>
+                        <strong th:text="${currentUser.email}"></strong>
+                        <small th:text="${currentUser.role}"></small>
+                    </span>
+                </a>
+                <form th:action="@{/logout}" method="post" data-testid="nav-logout-form"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="dashboard-topbar-logout" data-testid="nav-logout-button" aria-label="Log out">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>
+                    </button>
                 </form>
-                <form th:action="@{/tasks/{id}/delete(id=${task.id()})}" method="post">
-                    <button type="submit" class="danger" data-confirm-delete="true"
-                            th:attr="data-testid='delete-task-' + ${task.id()},data-confirm-message='Delete task ' + ${task.id()} + '?'">Delete</button>
-                </form>
-            </td>
-        </tr>
-        <tr class="empty-table-row" data-testid="task-empty-state-row" th:hidden="${!#lists.isEmpty(tasks)}">
-            <td colspan="6">No tasks found.</td>
-        </tr>
-        </tbody>
-    </table>
-
-    <div class="modal-backdrop" data-testid="delete-confirmation-modal" role="dialog" aria-modal="true">
-        <div class="modal">
-            <p data-testid="delete-confirmation-message">Delete this task?</p>
-            <div class="actions">
-                <button type="button" class="secondary" data-testid="delete-cancel-button">Cancel</button>
-                <button type="button" class="danger" data-testid="delete-confirm-button">Confirm</button>
             </div>
-        </div>
+        </header>
+
+        <main class="dashboard-page tasks-page">
+            <section class="tasks-page-heading">
+                <div>
+                    <h1 data-testid="task-list-title">My Tasks</h1>
+                    <p>Manage, track, and complete your tasks.</p>
+                </div>
+                <div class="tasks-page-actions">
+                    <a th:href="@{/tasks/new}" class="tasks-action-primary" data-testid="create-task-link">
+                        <span aria-hidden="true">+</span>
+                        New task
+                    </a>
+                    <a th:if="${isAdmin}" th:href="@{/admin}" class="tasks-action-primary tasks-action-solid" data-testid="admin-dashboard-link">Admin dashboard</a>
+                </div>
+            </section>
+
+            <div th:if="${successMessage}" class="alert success task-page-alert" th:text="${successMessage}" data-testid="success-message"></div>
+            <div class="toast" data-testid="toast-notification" role="status"></div>
+
+            <section class="tasks-filter-card" data-testid="task-filters">
+                <label for="taskStatusFilter">Status</label>
+                <select id="taskStatusFilter" data-testid="task-status-filter">
+                    <option value="" th:selected="${selectedStatus == null}">All statuses</option>
+                    <option value="TODO" th:selected="${selectedStatus != null and selectedStatus.name() == 'TODO'}">TODO</option>
+                    <option value="IN_PROGRESS" th:selected="${selectedStatus != null and selectedStatus.name() == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                    <option value="DONE" th:selected="${selectedStatus != null and selectedStatus.name() == 'DONE'}">DONE</option>
+                    <option value="CANCELLED" th:selected="${selectedStatus != null and selectedStatus.name() == 'CANCELLED'}">CANCELLED</option>
+                </select>
+
+                <button type="button" class="tasks-clear-button" data-testid="clear-task-filters-button">Clear filters</button>
+            </section>
+
+            <section class="tasks-table-card">
+                <table class="tasks-table" data-testid="task-table">
+                    <thead>
+                    <tr>
+                        <th><button type="button" class="sort-header" data-sort-key="title" data-testid="task-sort-title">Title <span data-sort-indicator="title" data-testid="task-sort-title-indicator"></span></button></th>
+                        <th><button type="button" class="sort-header" data-sort-key="status" data-testid="task-sort-status">Status <span data-sort-indicator="status" data-testid="task-sort-status-indicator"></span></button></th>
+                        <th><button type="button" class="sort-header" data-sort-key="priority" data-testid="task-sort-priority">Priority <span data-sort-indicator="priority" data-testid="task-sort-priority-indicator"></span></button></th>
+                        <th><button type="button" class="sort-header" data-sort-key="dueDate" data-testid="task-sort-due-date">Due date <span data-sort-indicator="dueDate" data-testid="task-sort-due-date-indicator"></span></button></th>
+                        <th><button type="button" class="sort-header" data-sort-key="owner" data-testid="task-sort-owner">Owner <span data-sort-indicator="owner" data-testid="task-sort-owner-indicator"></span></button></th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="task : ${tasks}"
+                        th:attr="data-testid='task-row-' + ${task.id()},data-status=${task.status()},data-title=${task.title()},data-sort-title=${task.title()},data-sort-status=${task.status()},data-sort-priority=${task.priority()},data-sort-dueDate=${task.dueDate()},data-sort-owner=${task.ownerEmail()}">
+                        <td class="task-title-cell" th:text="${task.title()}" th:attr="data-testid='task-title-' + ${task.id()}"></td>
+                        <td>
+                            <span th:text="${task.status()}"
+                                  th:class="'status-badge status-' + ${task.status()}"
+                                  th:attr="data-testid='task-status-' + ${task.id()}"></span>
+                        </td>
+                        <td th:attr="data-testid='task-priority-' + ${task.id()}">
+                            <span th:class="'priority-dot priority-' + ${task.priority()}"></span>
+                            <span th:text="${task.priority()}"></span>
+                        </td>
+                        <td th:text="${task.dueDate()}" th:attr="data-testid='task-due-date-' + ${task.id()}"></td>
+                        <td th:text="${task.ownerEmail()}" th:attr="data-testid='task-owner-' + ${task.id()}"></td>
+                        <td class="row-actions tasks-row-actions">
+                            <a th:href="@{/tasks/{id}(id=${task.id()})}" class="task-row-button task-row-button-outline" th:attr="data-testid='view-task-' + ${task.id()}">View</a>
+                            <a th:href="@{/tasks/{id}/edit(id=${task.id()})}" class="task-row-button task-row-button-outline" th:attr="data-testid='edit-task-' + ${task.id()}">Edit</a>
+                            <form th:action="@{/tasks/{id}/complete(id=${task.id()})}" method="post">
+                                <button type="submit" class="task-row-button task-row-button-muted" th:attr="data-testid='complete-task-' + ${task.id()}">Complete</button>
+                            </form>
+                            <form th:action="@{/tasks/{id}/delete(id=${task.id()})}" method="post">
+                                <button type="submit" class="task-row-button task-row-button-danger" data-confirm-delete="true"
+                                        th:attr="data-testid='delete-task-' + ${task.id()},data-confirm-message='Delete task ' + ${task.id()} + '?'">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr class="empty-table-row" data-testid="task-empty-state-row" th:hidden="${!#lists.isEmpty(tasks)}">
+                        <td colspan="6">No tasks found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="tasks-table-footer">
+                    <span th:text="'Showing ' + ${firstItem} + ' to ' + ${lastItem} + ' of ' + ${taskPage.totalElements()} + ' tasks'" data-testid="task-pagination-summary"></span>
+                    <div class="tasks-pagination" data-testid="task-pagination">
+                        <span th:if="${taskPage.first()}">&lsaquo;</span>
+                        <a th:if="${!taskPage.first()}" th:href="@{/tasks(page=${taskPage.page() - 1},size=${taskPage.size()},status=${selectedStatus},search=${search})}" data-testid="task-pagination-prev">&lsaquo;</a>
+                        <a th:each="pageNumber : ${pageNumbers}"
+                           th:href="@{/tasks(page=${pageNumber},size=${taskPage.size()},status=${selectedStatus},search=${search})}"
+                           th:text="${pageNumber + 1}"
+                           th:classappend="${pageNumber == taskPage.page()} ? ' is-active'"
+                           th:attr="data-testid='task-pagination-page-' + ${pageNumber + 1}"></a>
+                        <span th:if="${taskPage.last()}">&rsaquo;</span>
+                        <a th:if="${!taskPage.last()}" th:href="@{/tasks(page=${taskPage.page() + 1},size=${taskPage.size()},status=${selectedStatus},search=${search})}" data-testid="task-pagination-next">&rsaquo;</a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="modal-backdrop" data-testid="delete-confirmation-modal" role="dialog" aria-modal="true">
+                <div class="modal">
+                    <p data-testid="delete-confirmation-message">Delete this task?</p>
+                    <div class="actions">
+                        <button type="button" class="secondary" data-testid="delete-cancel-button">Cancel</button>
+                        <button type="button" class="danger" data-testid="delete-confirm-button">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-</main>
+</div>
 </body>
 </html>

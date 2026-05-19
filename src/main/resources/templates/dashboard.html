@@ -4,67 +4,333 @@
     <meta charset="UTF-8">
     <title>Dashboard - QA Task Manager SUT</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script defer th:src="@{/js/ui.js}"></script>
 </head>
-<body>
-<div th:replace="~{fragments/navigation :: mainNav}"></div>
-<main class="page">
-    <h1 data-testid="dashboard-title">Dashboard</h1>
-    <div class="summary-grid" data-testid="dashboard-summary">
-        <section class="summary-panel" data-testid="dashboard-task-card">
-            <strong>Tasks</strong>
-            <div class="counter-grid">
-                <a th:href="@{/tasks}" class="counter-link" data-testid="dashboard-total-task-counter">
-                    <span th:text="${taskCount}"></span>
-                    <small>Total</small>
+<body class="dashboard-body">
+<div class="dashboard-shell is-sidebar-collapsed">
+    <aside class="dashboard-sidebar" data-testid="dashboard-navigation">
+        <a th:href="@{/dashboard}" class="dashboard-brand" data-testid="nav-dashboard-brand-link">
+            <span class="dashboard-brand-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z"></path>
+                    <path d="M9 12l2 2 4-5"></path>
+                    <path d="M9 7h6"></path>
+                </svg>
+            </span>
+            <span>
+                <strong>QA Task Manager</strong>
+                <small>SUT</small>
+            </span>
+        </a>
+
+        <nav class="dashboard-side-nav" aria-label="Dashboard navigation">
+            <a th:href="@{/dashboard}" class="is-active" data-testid="nav-dashboard-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4z"></path><path d="M13 4h7v7h-7z"></path><path d="M4 13h7v7H4z"></path><path d="M13 13h7v7h-7z"></path></svg>
+                Dashboard
+            </a>
+            <a th:href="@{/tasks}" data-testid="nav-tasks-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12"></path><path d="M8 12h12"></path><path d="M8 18h12"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>
+                Tasks
+            </a>
+            <a th:href="@{/issues}" data-testid="nav-issues-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 4.2 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"></path></svg>
+                Issues
+            </a>
+            <a th:href="@{/admin}" data-testid="nav-admin-link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Users/Admin
+            </a>
+            <a th:if="${isAdmin}" th:href="@{/settings}" data-testid="nav-settings-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 0 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>Settings</a>
+        </nav>
+
+        <div class="dashboard-sidebar-spacer" aria-hidden="true"></div>
+    </aside>
+
+    <div class="dashboard-main-shell">
+        <header class="dashboard-topbar">
+            <button type="button" class="dashboard-menu-button" data-testid="dashboard-sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+            </button>
+            <strong>Dashboard</strong>
+            <div class="dashboard-topbar-actions">
+                <div class="dashboard-search">
+                    <input type="search" placeholder="Search..." data-testid="global-search-input" aria-label="Global search">
+                    <svg viewBox="0 0 24 24" role="img" aria-label="Search icon">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m16 16 4 4"></path>
+                    </svg>
+                </div>
+                <div class="notification-panel">
+                    <button type="button" class="notification-bell" data-testid="notification-bell" aria-expanded="false" aria-controls="notification-dropdown">
+                        <svg viewBox="0 0 24 24" role="img" aria-label="Notifications">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                            <path d="M10 21h4"></path>
+                        </svg>
+                        <span class="notification-badge" data-testid="unread-notification-badge" th:text="${unreadNotificationCount}" th:hidden="${unreadNotificationCount == 0}"></span>
+                    </button>
+                    <section id="notification-dropdown" class="notification-dropdown" data-testid="notification-dropdown" hidden>
+                        <div class="notification-dropdown-header">
+                            <strong>Notifications</strong>
+                            <span th:text="${unreadNotificationCount + ' unread'}"></span>
+                        </div>
+                        <p class="notification-empty" th:if="${#lists.isEmpty(notifications)}">No unread notifications.</p>
+                        <article class="notification-item" data-testid="notification-item" th:each="notification : ${notifications}">
+                            <div>
+                                <span class="notification-type" th:text="${notification.type()}"></span>
+                                <p th:text="${notification.message()}"></p>
+                                <small th:text="${notification.createdAt()}"></small>
+                            </div>
+                            <form th:action="@{/dashboard/notifications/{id}/read(id=${notification.id()})}" method="post">
+                                <button type="submit" class="notification-read-button" data-testid="mark-notification-read-button">Read</button>
+                            </form>
+                        </article>
+                    </section>
+                </div>
+                <a th:href="@{/profile}" class="dashboard-topbar-user" data-testid="nav-profile-link">
+                    <span class="dashboard-avatar" th:text="${#strings.substring(currentUser.email, 0, 1).toUpperCase()}"></span>
+                    <span>
+                        <strong th:text="${currentUser.email}"></strong>
+                        <small th:text="${currentUser.role}"></small>
+                    </span>
                 </a>
-                <a th:href="@{/tasks(status='TODO')}" class="counter-link counter-blue" data-testid="dashboard-task-todo-counter">
-                    <span th:text="${taskTodoCount}"></span>
-                    <small>TODO</small>
-                </a>
-                <a th:href="@{/tasks(status='IN_PROGRESS')}" class="counter-link counter-orange" data-testid="dashboard-task-in-progress-counter">
-                    <span th:text="${taskInProgressCount}"></span>
-                    <small>IN_PROGRESS</small>
-                </a>
-                <a th:href="@{/tasks(status='DONE')}" class="counter-link counter-green" data-testid="dashboard-task-done-counter">
-                    <span th:text="${taskDoneCount}"></span>
-                    <small>DONE</small>
-                </a>
+                <form th:action="@{/logout}" method="post" data-testid="nav-logout-form"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="dashboard-topbar-logout" data-testid="nav-logout-button" aria-label="Log out">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>
+                    </button>
+                </form>
             </div>
-        </section>
-        <section class="summary-panel" data-testid="dashboard-issue-card">
-            <strong>Issues</strong>
-            <div class="counter-grid">
-                <a th:href="@{/issues}" class="counter-link" data-testid="dashboard-total-issue-counter">
-                    <span th:text="${issueCount}"></span>
-                    <small>Total</small>
-                </a>
-                <a th:href="@{/issues(status='OPEN')}" class="counter-link counter-blue" data-testid="dashboard-issue-open-counter">
-                    <span th:text="${issueOpenCount}"></span>
-                    <small>OPEN</small>
-                </a>
-                <a th:href="@{/issues(status='IN_PROGRESS')}" class="counter-link counter-orange" data-testid="dashboard-issue-in-progress-counter">
-                    <span th:text="${issueInProgressCount}"></span>
-                    <small>IN_PROGRESS</small>
-                </a>
-                <a th:href="@{/issues(status='BLOCKED')}" class="counter-link counter-red" data-testid="dashboard-issue-blocked-counter">
-                    <span th:text="${issueBlockedCount}"></span>
-                    <small>BLOCKED</small>
-                </a>
-                <a th:href="@{/issues(status='RESOLVED')}" class="counter-link counter-green" data-testid="dashboard-issue-resolved-counter">
-                    <span th:text="${issueResolvedCount}"></span>
-                    <small>RESOLVED</small>
-                </a>
-                <a th:href="@{/issues(status='CLOSED')}" class="counter-link counter-gray" data-testid="dashboard-issue-closed-counter">
-                    <span th:text="${issueClosedCount}"></span>
-                    <small>CLOSED</small>
-                </a>
-                <a th:href="@{/issues(status='CANCELLED')}" class="counter-link counter-gray" data-testid="dashboard-issue-cancelled-counter">
-                    <span th:text="${issueCancelledCount}"></span>
-                    <small>CANCELLED</small>
-                </a>
-            </div>
-        </section>
+        </header>
+
+        <main class="dashboard-page">
+            <section class="dashboard-welcome-panel">
+                <div>
+                    <p class="dashboard-eyebrow">Project overview</p>
+                    <h1 data-testid="dashboard-title">Welcome back</h1>
+                    <p class="dashboard-subtitle" th:text="'Here is what is happening with tasks and issues visible to ' + ${currentUser.email} + '.'"></p>
+                </div>
+                <div class="dashboard-welcome-metric">
+                    <span>Total workload</span>
+                    <strong th:text="${taskCount + issueCount}"></strong>
+                </div>
+            </section>
+
+            <section class="dashboard-kpi-grid" data-testid="dashboard-summary">
+                <article class="dashboard-kpi-card dashboard-kpi-blue" data-testid="dashboard-task-card">
+                    <div class="dashboard-kpi-copy">
+                        <p>Total Tasks</p>
+                        <a th:href="@{/tasks}" class="dashboard-kpi-value" data-testid="dashboard-total-task-counter" th:text="${taskCount}"></a>
+                        <small>View all tasks</small>
+                    </div>
+                    <span class="dashboard-kpi-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12"></path><path d="M8 12h12"></path><path d="M8 18h12"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>
+                    </span>
+                </article>
+                <article class="dashboard-kpi-card dashboard-kpi-green">
+                    <div class="dashboard-kpi-copy">
+                        <p>Completed Tasks</p>
+                        <a th:href="@{/tasks(status='DONE')}" class="dashboard-kpi-value" data-testid="dashboard-task-done-summary-counter" th:text="${taskDoneCount}"></a>
+                        <small th:text="${taskDonePercent + '% of total tasks'}"></small>
+                    </div>
+                    <span class="dashboard-kpi-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </span>
+                </article>
+                <article class="dashboard-kpi-card dashboard-kpi-orange" data-testid="dashboard-issue-card">
+                    <div class="dashboard-kpi-copy">
+                        <p>Open Issues</p>
+                        <a th:href="@{/issues(status='OPEN')}" class="dashboard-kpi-value" data-testid="dashboard-issue-open-summary-counter" th:text="${issueOpenCount}"></a>
+                        <small>View open issues</small>
+                    </div>
+                    <span class="dashboard-kpi-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 4.2 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"></path></svg>
+                    </span>
+                </article>
+                <article class="dashboard-kpi-card dashboard-kpi-purple">
+                    <div class="dashboard-kpi-copy">
+                        <p>Total Issues</p>
+                        <a th:href="@{/issues}" class="dashboard-kpi-value" data-testid="dashboard-total-issue-counter" th:text="${issueCount}"></a>
+                        <small>View all issues</small>
+                    </div>
+                    <span class="dashboard-kpi-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10"></path><path d="M7 12h8"></path><path d="M7 16h6"></path><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path></svg>
+                    </span>
+                </article>
+            </section>
+
+            <section class="dashboard-status-panel" aria-label="Clickable status counters">
+                <article class="dashboard-status-card">
+                    <div class="dashboard-section-heading">
+                        <h2>Task Status</h2>
+                        <a th:href="@{/tasks}" class="dashboard-text-link" data-testid="view-all-tasks-status-link">View all tasks</a>
+                    </div>
+                    <div class="dashboard-status-grid">
+                        <a th:href="@{/tasks(status='TODO')}" class="dashboard-status-link counter-blue" data-testid="dashboard-task-todo-counter">
+                            <span th:text="${taskTodoCount}"></span>
+                            <small>TODO</small>
+                        </a>
+                        <a th:href="@{/tasks(status='IN_PROGRESS')}" class="dashboard-status-link counter-orange" data-testid="dashboard-task-in-progress-counter">
+                            <span th:text="${taskInProgressCount}"></span>
+                            <small>IN_PROGRESS</small>
+                        </a>
+                        <a th:href="@{/tasks(status='DONE')}" class="dashboard-status-link counter-green" data-testid="dashboard-task-done-counter">
+                            <span th:text="${taskDoneCount}"></span>
+                            <small>DONE</small>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="dashboard-status-card">
+                    <div class="dashboard-section-heading">
+                        <h2>Issue Status</h2>
+                        <a th:href="@{/issues}" class="dashboard-text-link" data-testid="view-all-issues-status-link">View all issues</a>
+                    </div>
+                    <div class="dashboard-status-grid dashboard-status-grid-wide">
+                        <a th:href="@{/issues(status='OPEN')}" class="dashboard-status-link counter-blue" data-testid="dashboard-issue-open-counter">
+                            <span th:text="${issueOpenCount}"></span>
+                            <small>OPEN</small>
+                        </a>
+                        <a th:href="@{/issues(status='IN_PROGRESS')}" class="dashboard-status-link counter-orange" data-testid="dashboard-issue-in-progress-counter">
+                            <span th:text="${issueInProgressCount}"></span>
+                            <small>IN_PROGRESS</small>
+                        </a>
+                        <a th:href="@{/issues(status='BLOCKED')}" class="dashboard-status-link counter-red" data-testid="dashboard-issue-blocked-counter">
+                            <span th:text="${issueBlockedCount}"></span>
+                            <small>BLOCKED</small>
+                        </a>
+                        <a th:href="@{/issues(status='RESOLVED')}" class="dashboard-status-link counter-green" data-testid="dashboard-issue-resolved-counter">
+                            <span th:text="${issueResolvedCount}"></span>
+                            <small>RESOLVED</small>
+                        </a>
+                        <a th:href="@{/issues(status='CLOSED')}" class="dashboard-status-link counter-gray" data-testid="dashboard-issue-closed-counter">
+                            <span th:text="${issueClosedCount}"></span>
+                            <small>CLOSED</small>
+                        </a>
+                        <a th:href="@{/issues(status='CANCELLED')}" class="dashboard-status-link counter-gray" data-testid="dashboard-issue-cancelled-counter">
+                            <span th:text="${issueCancelledCount}"></span>
+                            <small>CANCELLED</small>
+                        </a>
+                    </div>
+                </article>
+            </section>
+
+            <section class="dashboard-chart-grid">
+                <article class="dashboard-card">
+                    <h2>Tasks by Status</h2>
+                    <p class="dashboard-card-hint">Click a status to filter tasks.</p>
+                    <div class="dashboard-chart-row">
+                        <div class="donut-chart" th:style="'--todo:' + ${taskTodoPercent} + '%; --progress:' + ${taskInProgressPercent} + '%; --done:' + ${taskDonePercent} + '%;'" aria-hidden="true">
+                            <div>
+                                <strong th:text="${taskCount}"></strong>
+                                <span>Total</span>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <a th:href="@{/tasks(status='TODO')}" class="chart-legend-link" data-testid="task-status-chart-todo-link"><i class="legend-blue"></i>TODO <strong th:text="${taskTodoCount}"></strong></a>
+                            <a th:href="@{/tasks(status='IN_PROGRESS')}" class="chart-legend-link" data-testid="task-status-chart-in-progress-link"><i class="legend-orange"></i>IN_PROGRESS <strong th:text="${taskInProgressCount}"></strong></a>
+                            <a th:href="@{/tasks(status='DONE')}" class="chart-legend-link" data-testid="task-status-chart-done-link"><i class="legend-green"></i>DONE <strong th:text="${taskDoneCount}"></strong></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="dashboard-card">
+                    <h2>Issues by Status</h2>
+                    <p class="dashboard-card-hint">Click a status to filter issues.</p>
+                    <div class="bar-summary">
+                        <a th:href="@{/issues(status='OPEN')}" class="bar-summary-link" data-testid="issue-status-chart-open-link"><strong th:text="${issueOpenCount}"></strong><span th:style="'height:' + ${issueOpenPercent + 8} + '%'"></span><small>OPEN</small></a>
+                        <a th:href="@{/issues(status='IN_PROGRESS')}" class="bar-summary-link" data-testid="issue-status-chart-in-progress-link"><strong th:text="${issueInProgressCount}"></strong><span class="bar-orange" th:style="'height:' + ${issueInProgressPercent + 8} + '%'"></span><small>PROGRESS</small></a>
+                        <a th:href="@{/issues(status='BLOCKED')}" class="bar-summary-link" data-testid="issue-status-chart-blocked-link"><strong th:text="${issueBlockedCount}"></strong><span class="bar-red" th:style="'height:' + ${issueBlockedPercent + 8} + '%'"></span><small>BLOCKED</small></a>
+                        <a th:href="@{/issues(status='RESOLVED')}" class="bar-summary-link" data-testid="issue-status-chart-resolved-link"><strong th:text="${issueResolvedCount}"></strong><span class="bar-green" th:style="'height:' + ${issueResolvedPercent + 8} + '%'"></span><small>RESOLVED</small></a>
+                        <a th:href="@{/issues(status='CLOSED')}" class="bar-summary-link" data-testid="issue-status-chart-closed-link"><strong th:text="${issueClosedCount}"></strong><span class="bar-gray" th:style="'height:' + ${issueClosedPercent + 8} + '%'"></span><small>CLOSED</small></a>
+                        <a th:href="@{/issues(status='CANCELLED')}" class="bar-summary-link" data-testid="issue-status-chart-cancelled-link"><strong th:text="${issueCancelledCount}"></strong><span class="bar-gray" th:style="'height:' + ${issueCancelledPercent + 8} + '%'"></span><small>CANCELLED</small></a>
+                    </div>
+                </article>
+            </section>
+
+            <section class="dashboard-lower-grid">
+                <article class="dashboard-card dashboard-table-card">
+                    <div class="dashboard-section-heading">
+                        <h2>Recent Tasks</h2>
+                        <a th:href="@{/tasks}" class="dashboard-text-link" data-testid="view-all-tasks-link">View all tasks</a>
+                    </div>
+                    <table class="dashboard-table">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Due Date</th>
+                            <th>Owner</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="task : ${recentTasks}" th:attr="data-testid=${'recent-task-row-' + task.id()},data-href=@{/tasks/{id}(id=${task.id()})}">
+                            <td><a th:href="@{/tasks/{id}(id=${task.id()})}" class="dashboard-row-link" th:text="${task.title()}"></a></td>
+                            <td><a th:href="@{/tasks/{id}(id=${task.id()})}" class="dashboard-row-link"><span class="status-badge" th:classappend="' status-' + ${task.status()}" th:text="${task.status()}"></span></a></td>
+                            <td><a th:href="@{/tasks/{id}(id=${task.id()})}" class="dashboard-row-link" th:text="${task.priority()}"></a></td>
+                            <td><a th:href="@{/tasks/{id}(id=${task.id()})}" class="dashboard-row-link" th:text="${task.dueDate()}"></a></td>
+                            <td><a th:href="@{/tasks/{id}(id=${task.id()})}" class="dashboard-row-link" th:text="${task.ownerEmail()}"></a></td>
+                        </tr>
+                        <tr class="empty-table-row" th:if="${#lists.isEmpty(recentTasks)}">
+                            <td colspan="5">No tasks found.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </article>
+
+                <aside class="dashboard-card due-card">
+                    <div class="dashboard-section-heading">
+                        <h2>Upcoming Due Dates</h2>
+                    </div>
+                    <div class="due-list">
+                        <a th:each="task : ${upcomingTasks}" th:href="@{/tasks/{id}(id=${task.id()})}" class="due-item">
+                            <span>
+                                <strong th:text="${#strings.substring(task.dueDate().toString(), 5, 7)}"></strong>
+                                <em th:text="${#strings.substring(task.dueDate().toString(), 8, 10)}"></em>
+                            </span>
+                            <div>
+                                <strong th:text="${task.title()}"></strong>
+                                <small th:text="${task.status()}"></small>
+                            </div>
+                        </a>
+                        <p class="notification-empty" th:if="${#lists.isEmpty(upcomingTasks)}">No tasks found.</p>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="dashboard-card dashboard-table-card">
+                <div class="dashboard-section-heading">
+                    <h2>Recent Issues</h2>
+                    <a th:href="@{/issues}" class="dashboard-text-link" data-testid="view-all-issues-link">View all issues</a>
+                </div>
+                <table class="dashboard-table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Assigned</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="issue : ${recentIssues}" th:attr="data-testid=${'recent-issue-row-' + issue.id()},data-href=@{/issues/{id}(id=${issue.id()})}">
+                        <td><a th:href="@{/issues/{id}(id=${issue.id()})}" class="dashboard-row-link" th:text="${issue.title()}"></a></td>
+                        <td><a th:href="@{/issues/{id}(id=${issue.id()})}" class="dashboard-row-link"><span class="status-badge" th:classappend="' status-' + ${issue.status()}" th:text="${issue.status()}"></span></a></td>
+                        <td><a th:href="@{/issues/{id}(id=${issue.id()})}" class="dashboard-row-link" th:text="${issue.priority()}"></a></td>
+                        <td><a th:href="@{/issues/{id}(id=${issue.id()})}" class="dashboard-row-link" th:text="${issue.startDate()}"></a></td>
+                        <td><a th:href="@{/issues/{id}(id=${issue.id()})}" class="dashboard-row-link" th:text="${issue.endDate()}"></a></td>
+                        <td><a th:href="@{/issues/{id}(id=${issue.id()})}" class="dashboard-row-link" th:text="${issue.assignedUserEmail()}"></a></td>
+                    </tr>
+                    <tr class="empty-table-row" th:if="${#lists.isEmpty(recentIssues)}">
+                        <td colspan="6">No issues found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+            <footer class="dashboard-footer">2026 QA Task Manager SUT. All rights reserved.</footer>
+        </main>
     </div>
-</main>
+</div>
 </body>
 </html>

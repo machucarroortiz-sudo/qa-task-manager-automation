@@ -10,7 +10,7 @@
     </div>
     <div class="nav-right" data-testid="nav-right-group">
         <a th:href="@{/profile}" data-testid="nav-profile-link">Profile</a>
-        <form th:action="@{/logout}" method="post" data-testid="nav-logout-form">
+        <form th:action="@{/logout}" method="post" data-testid="nav-logout-form"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <button type="submit" class="secondary" data-testid="nav-logout-button">Log out</button>
         </form>
     </div>
