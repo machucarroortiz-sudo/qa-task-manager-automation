@@ -100,7 +100,7 @@ The metadata includes SUT version, release name, lifecycle stage, active Spring 
 
 ## Localization
 
-The portfolio UI is English by default and supports Spanish from the language selector on the login page and authenticated top bar. The selected language is stored in the `sut_locale` cookie, so the preference survives navigation without changing API contracts.
+The application UI is English by default and supports Spanish from the language selector on the login page and authenticated top bar. The selected language is stored in the `sut_locale` cookie, so the preference survives navigation without changing API contracts.
 
 Localization is intentionally scoped:
 
